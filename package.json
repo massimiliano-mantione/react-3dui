@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/massimiliano-mantione/fftt#readme",
   "dependencies": {
+    "css-layout": "^1.1.1",
     "konva": "^0.14.0",
     "object-assign": "^4.1.0",
     "react": "^15.1.0",

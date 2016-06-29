@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/massimiliano-mantione/fftt#readme",
   "dependencies": {
-    "akkad": "^1.3.2",
     "css-layout": "^1.1.1",
     "konva": "^0.14.0",
     "object-assign": "^4.1.0",

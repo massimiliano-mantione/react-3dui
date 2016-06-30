@@ -250,7 +250,6 @@ var NodeMixin = {
   },
 
   applyNodeProps: function (oldProps, props) {
-    console.log('applyNodeProps', this.node.nodeType, 'props', props, 'this.props', this.props)
     var updatedProps = {}
     var hasUpdates = false
     for (let key in oldProps) {
@@ -394,22 +393,32 @@ var GroupMixin = {
   mountComponent: function (transaction, nativeParent, nativeContainerInfo, context) {
     this.node = new Konva[this.constructor.displayName]()
     this.node.reactElement = this
-    if (this.constructor.displayName === 'Layer' || this.constructor.displayName === 'FastLayer') {
-      var self = this
-      var layer = this.node
-      if (self.props && typeof self.props[CANVAS_HANDLER] === 'function') {
-        self.props[CANVAS_HANDLER](layer.getCanvas())
-      }
-      this.node.on('draw', function () {
-        if (self.props && typeof self.props[DRAW_HANDLER] === 'function') {
-          self.props[DRAW_HANDLER](layer.getCanvas())
-        }
-      })
-    }
     nativeParent.node.add(this.node)
     var props = this._initialProps
     this.applyNodeProps(emptyObject, props)
     this.mountAndInjectChildren(props.children, transaction, context)
+
+    if (this.constructor.displayName === 'Layer' || this.constructor.displayName === 'FastLayer') {
+      var self = this
+      var layer = this.node
+
+      let initialProps = self.props || props
+      if (initialProps && typeof initialProps[CANVAS_HANDLER] === 'function') {
+        // FIXME: find an alternative to using _canvas
+        var canvas = layer.getCanvas().getContext().canvas._canvas
+
+        initialProps[CANVAS_HANDLER](canvas)
+
+        layer.on('draw', function () {
+          let element = self._currentElement || self
+          let elementProps = element.props
+          if (elementProps && typeof elementProps[DRAW_HANDLER] === 'function') {
+            elementProps[DRAW_HANDLER](canvas)
+          }
+        })
+      }
+    }
+
     return {
       children: [],
       node: this.node,

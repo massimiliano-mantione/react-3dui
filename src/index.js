@@ -50,7 +50,7 @@ function App () {
     <div>
       <p>Hello</p>
       <Stage width={300} height={200} style={stageStyle}>
-        <Layer style={layerStyle}>
+        <Layer style={layerStyle} canvasHandler={useCanvas2d} drawHandler={updateDynamicTexture}>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>
@@ -64,7 +64,10 @@ function App () {
 var canvas3d = document.getElementById('container3d')
 var engine = new BABYLON.Engine(canvas3d, true)
 
-var createScene = function() {
+var canvas2d = null
+var dynamicTexture = null
+
+var createScene = function () {
   // create a basic BJS Scene object
   var scene = new BABYLON.Scene(engine)
 
@@ -76,27 +79,47 @@ var createScene = function() {
   camera.attachControl(canvas3d, false)
 
   // create a basic light, aiming 0,1,0 - meaning, to the sky
-  new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene)
+  var light1 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene)
+  light1.diffuse = new BABYLON.Color3(1, 1, 1)
+  light1.specular = new BABYLON.Color3(1, 1, 1)
+  light1.groundColor = new BABYLON.Color3(0, 0, 0)
 
   // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
   var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene)
-
-  // move the sphere upward 1/2 of its height
   sphere.position.y = 1
 
   // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
   var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene)
+  var mat = new BABYLON.StandardMaterial('mat1', scene)
+  mat.alpha = 1.0
+  mat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
+
+  console.log('CANVAS', canvas2d)
+
+  var texture = new BABYLON.DynamicTexture('texture1', canvas2d, scene)
+  dynamicTexture = texture
+  mat.diffuseTexture = texture
+  // mat.diffuseTexture.hasAlpha = true
+  ground.material = mat
 
   // return the created scene
   return scene
 }
 
-var scene = createScene()
-engine.runRenderLoop(function () {
-  scene.render()
-})
-window.addEventListener('resize', function () {
-  engine.resize()
-})
+function useCanvas2d (canvas) {
+  canvas2d = canvas
+  var scene = createScene()
+  engine.runRenderLoop(function () {
+    scene.render()
+  })
+  window.addEventListener('resize', function () {
+    engine.resize()
+  })
+}
+function updateDynamicTexture () {
+  if (dynamicTexture !== null) {
+    dynamicTexture.update()
+  }
+}
 
 ReactDOM.render(<App/>, document.getElementById('container2d'))

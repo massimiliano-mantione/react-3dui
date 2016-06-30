@@ -4,21 +4,18 @@ import Konva from 'konva'
 import {Layer, Rect, Stage} from './react-konva'
 import BABYLON from 'babylonjs'
 
-class MyRect extends React.Component {
-  constructor (...args) {
-    super(...args)
-    this.state = {
-      color: 'green'
-    }
-    this.handleClick = this.handleClick.bind(this)
-    setInterval(this.handleClick, 2000)
-  }
-  handleClick () {
+var MyRect = React.createClass({
+  getInitialState: function () {
+    // FIXME: cannot use construct (used in mixins), but this is not nice
+    setInterval(() => { this.handleClick() }, 2000)
+    return { color: 'green' }
+  },
+  handleClick: function () {
     this.setState({
       color: Konva.Util.getRandomColor()
     })
-  }
-  render () {
+  },
+  render: function () {
     return (
       <Rect
         fill={this.state.color}
@@ -28,7 +25,7 @@ class MyRect extends React.Component {
       />
     )
   }
-}
+})
 
 var MARGIN = 5
 var stageStyle = {}
@@ -42,32 +39,38 @@ var shapeStyle2 = {
   margin: MARGIN
 }
 
-function App () {
+var App = React.createClass({
+  propTypes: {
+    canvasHandler: React.PropTypes.func,
+    drawHandler: React.PropTypes.func
+  },
+  // useCanvas2d, updateDynamicTexture
   // Stage - is a div wrapper
   // Layer - is a <canvas> element on the page
   // so you can use several canvases. It may help you to improve performance a lot.
-  return (
-    <div>
-      <p>Hello</p>
-      <Stage width={300} height={200} style={stageStyle}>
-        <Layer style={layerStyle} canvasHandler={useCanvas2d} drawHandler={updateDynamicTexture}>
+  render: function () {
+    return (
+      <div>
+        <p>Hello</p>
+        <Stage width={300} height={200} style={stageStyle}>
+          <Layer style={layerStyle} canvasHandler={this.props.canvasHandler} drawHandler={this.props.drawHandler}>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle2}/>
-        </Layer>
-      </Stage>
-    </div>
-  )
-}
+          </Layer>
+        </Stage>
+      </div>
+    )
+  }
+})
 
 var canvas3d = document.getElementById('container3d')
 var engine = new BABYLON.Engine(canvas3d, true)
 
-var canvas2d = null
 var dynamicTexture = null
 
-var createScene = function () {
+var createScene = function (canvas2d) {
   // create a basic BJS Scene object
   var scene = new BABYLON.Scene(engine)
 
@@ -94,21 +97,18 @@ var createScene = function () {
   mat.alpha = 1.0
   mat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
 
-  console.log('CANVAS', canvas2d)
-
   var texture = new BABYLON.DynamicTexture('texture1', canvas2d, scene)
   dynamicTexture = texture
   mat.diffuseTexture = texture
-  // mat.diffuseTexture.hasAlpha = true
+  mat.diffuseTexture.hasAlpha = true
   ground.material = mat
 
   // return the created scene
   return scene
 }
 
-function useCanvas2d (canvas) {
-  canvas2d = canvas
-  var scene = createScene()
+function useCanvas2d (canvas2d) {
+  var scene = createScene(canvas2d)
   engine.runRenderLoop(function () {
     scene.render()
   })
@@ -122,4 +122,4 @@ function updateDynamicTexture () {
   }
 }
 
-ReactDOM.render(<App/>, document.getElementById('container2d'))
+ReactDOM.render(<App canvasHandler={useCanvas2d} drawHandler={updateDynamicTexture}/>, document.getElementById('container2d'))

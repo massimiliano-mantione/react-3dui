@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="description" content="react-konva DEMO">
+  <meta name="description" content="react-konva DEMO">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>react-konva DEMO</title>
+  <style>
+    html, body {
+      overflow: hidden;
+      width   : 100%;
+      height  : 100%;
+      margin  : 0;
+      padding : 0;
+    }
+    #renderCanvas {
+      width   : 100%;
+      height  : 100%;
+      touch-action: none;
+    }
+  </style>
 </head>
 <body>
-  <div id='container'></div>
+  <div id='container2d'></div>
+  <canvas id="container3d"></canvas>
   <script type="text/javascript" src="/static/bundle.js"></script>
 </body>
 </html>

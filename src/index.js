@@ -2,74 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import Konva from 'konva'
 import {Layer, Rect, Stage} from './react-konva'
-import React3 from 'react-three-renderer'
-import THREE from 'three'
-
-class Simple extends React.Component {
-  constructor (props, context) {
-    super(props, context)
-
-    // construct the position vector here, because if we use 'new' within render,
-    // React will think that things have changed when they have not.
-    this.cameraPosition = new THREE.Vector3(0, 0, 5)
-
-    this.state = {
-      cubeRotation: new THREE.Euler()
-    }
-
-    this._onAnimate = () => {
-      // we will get this callback every frame
-
-      // pretend cubeRotation is immutable.
-      // this helps with updates and pure rendering.
-      // React will be sure that the rotation has now updated.
-      this.setState({
-        cubeRotation: new THREE.Euler(
-          this.state.cubeRotation.x + 0.1,
-          this.state.cubeRotation.y + 0.1,
-          0
-        )
-      })
-    }
-  }
-
-  render () {
-    const width = 300 // canvas width
-    const height = 200 // canvas height
-
-    return (<React3
-      mainCamera = 'camera' // this points to the perspectiveCamera which has the name set to "camera" below
-      width={width}
-      height={height}
-
-      onAnimate={this._onAnimate}
-    >
-      <scene>
-        <perspectiveCamera
-          name='camera'
-          fov={75}
-          aspect={width / height}
-          near={0.1}
-          far={1000}
-
-          position={this.cameraPosition}
-        />
-        <mesh
-          rotation={this.state.cubeRotation}
-        >
-          <boxGeometry
-            width={1}
-            height={1}
-            depth={1}
-          />
-          <meshBasicMaterial
-            color={0x00ff00}
-          />
-        </mesh>
-      </scene>
-    </React3>)
-  }
-}
+import BABYLON from 'babylonjs'
 
 class MyRect extends React.Component {
   constructor (...args) {
@@ -78,6 +11,7 @@ class MyRect extends React.Component {
       color: 'green'
     }
     this.handleClick = this.handleClick.bind(this)
+    setInterval(this.handleClick, 2000)
   }
   handleClick () {
     this.setState({
@@ -123,9 +57,46 @@ function App () {
             <MyRect style={shapeStyle2}/>
         </Layer>
       </Stage>
-      <Simple/>
     </div>
   )
 }
 
-ReactDOM.render(<App/>, document.getElementById('container'))
+var canvas3d = document.getElementById('container3d')
+var engine = new BABYLON.Engine(canvas3d, true)
+
+var createScene = function() {
+  // create a basic BJS Scene object
+  var scene = new BABYLON.Scene(engine)
+
+  // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
+  var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene)
+  // target the camera to scene origin
+  camera.setTarget(BABYLON.Vector3.Zero())
+  // attach the camera to the canvas
+  camera.attachControl(canvas3d, false)
+
+  // create a basic light, aiming 0,1,0 - meaning, to the sky
+  new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0,1,0), scene)
+
+  // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
+  var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene)
+
+  // move the sphere upward 1/2 of its height
+  sphere.position.y = 1
+
+  // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
+  var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene)
+
+  // return the created scene
+  return scene
+}
+
+var scene = createScene()
+engine.runRenderLoop(function () {
+  scene.render()
+})
+window.addEventListener('resize', function () {
+  engine.resize()
+})
+
+ReactDOM.render(<App/>, document.getElementById('container2d'))

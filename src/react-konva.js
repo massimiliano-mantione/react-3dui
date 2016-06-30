@@ -207,11 +207,8 @@ var NodeMixin = {
   // This should be called only on layer and stage nodes
   recomputeLayout: function () {
     if (this.hasStyle()) {
-      console.log('recomputeLayout: TRY')
       var layoutTree = createLayoutNode(this.node)
       computeLayout(layoutTree)
-
-      console.log('recomputeLayout: APPLY', layoutTree)
       applyLayout(layoutTree, 0, 0)
     }
   },

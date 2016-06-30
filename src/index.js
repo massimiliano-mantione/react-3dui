@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Konva from 'konva'
-import {Layer, Rect, Stage} from '../lib/react-konva'
+import {Layer, Rect, Stage} from './react-konva'
 import React3 from 'react-three-renderer'
 import THREE from 'three'
 
@@ -114,6 +114,7 @@ function App () {
   // so you can use several canvases. It may help you to improve performance a lot.
   return (
     <div>
+      <p>Hello</p>
       <Stage width={300} height={200} style={stageStyle}>
         <Layer style={layerStyle}>
             <MyRect style={shapeStyle}/>

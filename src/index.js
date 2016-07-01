@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Konva from 'konva'
-import {Layer, Stage, Group, Rect, Text} from './react-konva'
+import {Layer, Stage, Group, Rect, Circle, Text} from './react-konva'
 import BABYLON from 'babylonjs'
 import assign from 'object-assign'
 
@@ -60,6 +60,7 @@ var App2d = React.createClass({
   // so you can use several canvases. It may help you to improve performance a lot.
 
   // <Circle style={shapeStyle} radius={20} width={40} height={40} fill={'black'}/>
+  // <Rect style={{flex: 1}} fill={'yellow'} />
 
   render: function () {
     return (
@@ -73,6 +74,16 @@ var App2d = React.createClass({
                 <Text style={textStyle} text={'Hola!'} fill={'black'} align={'center'} fontSize={24}/>
                 <MyRect style={shapeStyle}/>
                 <Text style={textStyle} text={'...halo'} fill={'black'} fontSize={24}/>
+              </Group>
+            </Group>
+            <Group style={shapeGroupStyle}>
+              <Rect style={{flex: 1}} fill={'yellow'} />
+              <Group style={lineStyle}>
+                <Text style={textStyle} text={'Before...'} fill={'black'} align={'center'} fontSize={20}/>
+                <Group style={{flex: 1, autoClip: true, flat: true}}>
+                  <Circle style={{flex: 1}} fill={'black'} stroke={'red'} radius={45} />
+                </Group>
+                <Text style={textStyle} text={'...after'} fill={'black'} align={'center'} fontSize={20}/>
               </Group>
             </Group>
             <MyRect style={shapeStyle}/>

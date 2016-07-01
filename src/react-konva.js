@@ -196,11 +196,17 @@ function applySizeToStyle (konvaNode, style, keepSize) {
   }
 }
 
-function applyLayoutData (konvaNode, layoutNode, parentLeft, parentTop) {
+function applyLayoutData (style, konvaNode, layoutNode, parentLeft, parentTop) {
   konvaNode.x(layoutNode.layout.left + parentLeft)
   konvaNode.y(layoutNode.layout.top + parentTop)
   konvaNode.width(layoutNode.layout.width)
   konvaNode.height(layoutNode.layout.height)
+  if (style.autoClip) {
+    konvaNode.clipX(0)
+    konvaNode.clipY(0)
+    konvaNode.clipWidth(konvaNode.width())
+    konvaNode.clipHeight(konvaNode.height())
+  }
 }
 
 function applyLayout (layoutNode, parentLeft, parentTop) {
@@ -208,7 +214,7 @@ function applyLayout (layoutNode, parentLeft, parentTop) {
   parentTop = (typeof parentTop === 'number') ? parentTop : 0
 
   if (!nodeHasOwnSize(layoutNode.node)) {
-    applyLayoutData(layoutNode.node, layoutNode, parentLeft, parentTop)
+    applyLayoutData(layoutNode.style, layoutNode.node, layoutNode, parentLeft, parentTop)
   }
 
   if (layoutNode.children && layoutNode.children.length > 0) {
@@ -218,7 +224,7 @@ function applyLayout (layoutNode, parentLeft, parentTop) {
   }
   if (layoutNode.subRoots && layoutNode.subRoots.length > 0) {
     layoutNode.subRoots.forEach(function (subRoot) {
-      applyLayoutData(subRoot.node, layoutNode, layoutNode.node.x(), layoutNode.node.y())
+      applyLayoutData({}, subRoot.node, layoutNode, layoutNode.node.x(), layoutNode.node.y())
       subRoot.style.x = subRoot.node.x()
       subRoot.style.y = subRoot.node.y()
       subRoot.style.width = subRoot.node.width()

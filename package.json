@@ -27,6 +27,7 @@
   "dependencies": {
     "babylonjs": "^2.4.0",
     "css-layout": "^1.1.1",
+    "debonair": "0.0.13",
     "konva": "^0.14.0",
     "object-assign": "^4.1.0",
     "react": "^15.1.0",

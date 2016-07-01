@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom'
 import Konva from 'konva'
 import {Layer, Stage, Group, Rect, Circle, Text} from './react-konva'
 import BABYLON from 'babylonjs'
-import assign from 'object-assign'
+import {Styler} from 'debonair'
+let createStyler = Styler.create
 
 var MyRect = React.createClass({
   getInitialState: function () {
@@ -28,26 +29,16 @@ var MyRect = React.createClass({
   }
 })
 
-var MARGIN = 5
-var stageStyle = {}
-var layerStyle = {flexDirection: 'column', alignItems: 'stretch', flex: 1}
-var lineStyle = {flexDirection: 'row', alignItems: 'stretch', flex: 1}
-var textStyle = {
-  flex: 1,
-  alignItems: 'stretch',
-  margin: MARGIN
-}
-var shapeStyle = {
-  flex: 1,
-  margin: MARGIN
-}
-var shapeStyle2 = {
-  flex: 2,
-  margin: MARGIN
-}
-var shapeGroupStyle = assign({
-  flat: true
-}, shapeStyle)
+let stageStyler = createStyler({})
+let flexStyler = createStyler({flex: 1})
+let containerStyler = createStyler(flexStyler, {alignItems: 'stretch'})
+let verticalStyler = createStyler(flexStyler, {flexDirection: 'column'})
+let horizontalStyler = createStyler(flexStyler, {flexDirection: 'row'})
+let marginStyler = createStyler({margin: 5})
+let textStyler = createStyler(containerStyler, marginStyler)
+let shapeStyler1 = createStyler(marginStyler, {flex: 1})
+let shapeStyler2 = createStyler(marginStyler, {flex: 2})
+let flatStyler = createStyler(flexStyler, {flat: true})
 
 var App2d = React.createClass({
   propTypes: {
@@ -66,30 +57,30 @@ var App2d = React.createClass({
     return (
       <div>
         <p>Hello</p>
-        <Stage width={300} height={200} style={stageStyle}>
-          <Layer style={layerStyle} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
-            <Group style={shapeGroupStyle}>
-              <MyRect style={shapeStyle}/>
-              <Group style={lineStyle}>
-                <Text style={textStyle} text={'Hola!'} fill={'black'} align={'center'} fontSize={24}/>
-                <MyRect style={shapeStyle}/>
-                <Text style={textStyle} text={'...halo'} fill={'black'} fontSize={24}/>
+        <Stage width={300} height={200} style={stageStyler()}>
+          <Layer style={verticalStyler()} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
+            <Group style={flatStyler()}>
+              <MyRect style={shapeStyler1()}/>
+              <Group style={horizontalStyler()}>
+                <Text style={textStyler()} text={'Hola!'} fill={'black'} align={'center'} fontSize={24}/>
+                <MyRect style={shapeStyler1()}/>
+                <Text style={textStyler()} text={'...halo'} fill={'black'} fontSize={24}/>
               </Group>
             </Group>
-            <Group style={shapeGroupStyle}>
-              <Rect style={{flex: 1}} fill={'yellow'} />
-              <Group style={lineStyle}>
-                <Text style={textStyle} text={'Before...'} fill={'black'} align={'center'} fontSize={20}/>
-                <Group style={{flex: 1, autoClip: true, flat: true}}>
-                  <Circle style={{flex: 1}} fill={'black'} stroke={'red'} radius={45} />
+            <Group style={flatStyler()}>
+              <Rect style={flexStyler()} fill={'yellow'} />
+              <Group style={horizontalStyler()}>
+                <Text style={textStyler()} text={'Before...'} fill={'black'} align={'center'} fontSize={20}/>
+                <Group style={flatStyler({autoClip: true})}>
+                  <Circle style={flexStyler()} fill={'black'} stroke={'red'} radius={45} />
                 </Group>
-                <Text style={textStyle} text={'...after'} fill={'black'} align={'center'} fontSize={20}/>
+                <Text style={textStyler()} text={'...after'} fill={'black'} align={'center'} fontSize={20}/>
               </Group>
             </Group>
-            <MyRect style={shapeStyle}/>
-            <MyRect style={shapeStyle}/>
-            <MyRect style={shapeStyle}/>
-            <MyRect style={shapeStyle2}/>
+            <MyRect style={shapeStyler1()}/>
+            <MyRect style={shapeStyler1()}/>
+            <MyRect style={shapeStyler1()}/>
+            <MyRect style={shapeStyler2()}/>
           </Layer>
         </Stage>
       </div>

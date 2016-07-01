@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Konva from 'konva'
-import {Layer, Rect, Stage} from './react-konva'
+import {Layer, Stage, Group, Rect, Text} from './react-konva'
 import BABYLON from 'babylonjs'
+import assign from 'object-assign'
 
 var MyRect = React.createClass({
   getInitialState: function () {
     // FIXME: cannot use construct (used in mixins), but this is not nice
-    setInterval(() => { this.handleClick() }, 2000)
+    // setInterval(() => { this.handleClick() }, 2000)
     return { color: 'green' }
   },
   handleClick: function () {
@@ -30,6 +31,12 @@ var MyRect = React.createClass({
 var MARGIN = 5
 var stageStyle = {}
 var layerStyle = {flexDirection: 'column', alignItems: 'stretch', flex: 1}
+var lineStyle = {flexDirection: 'row', alignItems: 'stretch', flex: 1}
+var textStyle = {
+  flex: 1,
+  alignItems: 'stretch',
+  margin: MARGIN
+}
 var shapeStyle = {
   flex: 1,
   margin: MARGIN
@@ -38,6 +45,9 @@ var shapeStyle2 = {
   flex: 2,
   margin: MARGIN
 }
+var shapeGroupStyle = assign({
+  flat: true
+}, shapeStyle)
 
 var App = React.createClass({
   propTypes: {
@@ -48,12 +58,23 @@ var App = React.createClass({
   // Stage - is a div wrapper
   // Layer - is a <canvas> element on the page
   // so you can use several canvases. It may help you to improve performance a lot.
+
+  // <Circle style={shapeStyle} radius={20} width={40} height={40} fill={'black'}/>
+
   render: function () {
     return (
       <div>
         <p>Hello</p>
         <Stage width={300} height={200} style={stageStyle}>
           <Layer style={layerStyle} canvasHandler={this.props.canvasHandler} drawHandler={this.props.drawHandler}>
+            <Group style={shapeGroupStyle}>
+              <MyRect style={shapeStyle}/>
+              <Group style={lineStyle}>
+                <Text style={textStyle} text={'Hola!'} fill={'black'} align={'center'} fontSize={24}/>
+                <MyRect style={shapeStyle}/>
+                <Text style={textStyle} text={'...halo'} fill={'black'} fontSize={24}/>
+              </Group>
+            </Group>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>
             <MyRect style={shapeStyle}/>

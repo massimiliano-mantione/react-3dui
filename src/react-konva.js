@@ -131,14 +131,11 @@ var ContainerMixin = assign({}, ReactMultiChild.Mixin, {
   }
 })
 
-function createLayoutNode (konvaNode) {
+function createLayoutNode (konvaNode, keepSize) {
   var children = []
-
-  if (typeof konvaNode.getChildren === 'function') {
-    let konvaNodeChildren = konvaNode.getChildren()
-    konvaNodeChildren.forEach(function (child) {
-      children.push(createLayoutNode(child))
-    })
+  var subRoots = []
+  if (keepSize !== true) {
+    keepSize = false
   }
 
   var result = {
@@ -151,11 +148,24 @@ function createLayoutNode (konvaNode) {
       right: 0,
       bottom: 0
     },
-    style: konvaNode.reactElement.getStyle(),
-    children: children
+    style: assign({}, konvaNode.reactElement.getStyle()),
+    children: children,
+    subRoots: subRoots
   }
 
-  applySizeToStyle(konvaNode, result.style)
+  applySizeToStyle(konvaNode, result.style, keepSize)
+
+  if (typeof konvaNode.getChildren === 'function') {
+    let konvaNodeChildren = konvaNode.getChildren()
+    konvaNodeChildren.forEach(function (child) {
+      let childLayout = createLayoutNode(child, false)
+      if (result.style.flat) {
+        subRoots.push(childLayout)
+      } else {
+        children.push(childLayout)
+      }
+    })
+  }
 
   return result
 }
@@ -165,13 +175,32 @@ function nodeHasOwnSize (konvaNode) {
   return (className === 'Stage' || className === 'Layer' || className === 'FastLayer')
 }
 
-function applySizeToStyle (konvaNode, style) {
-  if (nodeHasOwnSize(konvaNode)) {
+function nodeHasMinimumSize (konvaNode) {
+  if (konvaNode.reactElement) {
+    let style = konvaNode.reactElement.getStyle()
+    return style && style.minFromSize
+  } else {
+    return false
+  }
+}
+
+function applySizeToStyle (konvaNode, style, keepSize) {
+  if (keepSize || nodeHasOwnSize(konvaNode)) {
     style.x = konvaNode.x()
     style.y = konvaNode.y()
     style.width = konvaNode.width()
     style.height = konvaNode.height()
+  } else if (nodeHasMinimumSize(konvaNode)) {
+    style.minWidth = konvaNode.width()
+    style.minHeight = konvaNode.height()
   }
+}
+
+function applyLayoutData (konvaNode, layoutNode, parentLeft, parentTop) {
+  konvaNode.x(layoutNode.layout.left + parentLeft)
+  konvaNode.y(layoutNode.layout.top + parentTop)
+  konvaNode.width(layoutNode.layout.width)
+  konvaNode.height(layoutNode.layout.height)
 }
 
 function applyLayout (layoutNode, parentLeft, parentTop) {
@@ -179,15 +208,22 @@ function applyLayout (layoutNode, parentLeft, parentTop) {
   parentTop = (typeof parentTop === 'number') ? parentTop : 0
 
   if (!nodeHasOwnSize(layoutNode.node)) {
-    layoutNode.node.x(layoutNode.layout.left + parentLeft)
-    layoutNode.node.y(layoutNode.layout.top + parentTop)
-    layoutNode.node.width(layoutNode.layout.width)
-    layoutNode.node.height(layoutNode.layout.height)
+    applyLayoutData(layoutNode.node, layoutNode, parentLeft, parentTop)
   }
 
   if (layoutNode.children && layoutNode.children.length > 0) {
     layoutNode.children.forEach(function (child) {
       applyLayout(child, layoutNode.node.x(), layoutNode.node.y())
+    })
+  }
+  if (layoutNode.subRoots && layoutNode.subRoots.length > 0) {
+    layoutNode.subRoots.forEach(function (subRoot) {
+      applyLayoutData(subRoot.node, layoutNode, layoutNode.node.x(), layoutNode.node.y())
+      subRoot.style.x = subRoot.node.x()
+      subRoot.style.y = subRoot.node.y()
+      subRoot.style.width = subRoot.node.width()
+      subRoot.style.height = subRoot.node.height()
+      subRoot.node.reactElement.recomputeLayout()
     })
   }
 }
@@ -207,7 +243,7 @@ var NodeMixin = {
   // This should be called only on layer and stage nodes
   recomputeLayout: function () {
     if (this.hasStyle()) {
-      var layoutTree = createLayoutNode(this.node)
+      var layoutTree = createLayoutNode(this.node, true)
       computeLayout(layoutTree)
       applyLayout(layoutTree, 0, 0)
     }

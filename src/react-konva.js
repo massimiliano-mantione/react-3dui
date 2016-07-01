@@ -422,9 +422,6 @@ var Stage = React.createClass({
   }
 })
 
-var DRAW_HANDLER = 'drawHandler'
-var CANVAS_HANDLER = 'canvasHandler'
-
 var GroupMixin = {
   mountComponent: function (transaction, nativeParent, nativeContainerInfo, context) {
     this.node = new Konva[this.constructor.displayName]()
@@ -439,19 +436,15 @@ var GroupMixin = {
       var layer = this.node
 
       let initialProps = self.props || props
-      if (initialProps && typeof initialProps[CANVAS_HANDLER] === 'function') {
-        // FIXME: find an alternative to using _canvas
-        var canvas = layer.getCanvas().getContext().canvas._canvas
-
-        initialProps[CANVAS_HANDLER](canvas)
-
-        layer.on('draw', function () {
-          let element = self._currentElement || self
-          let elementProps = element.props
-          if (elementProps && typeof elementProps[DRAW_HANDLER] === 'function') {
-            elementProps[DRAW_HANDLER](canvas)
-          }
-        })
+      if (initialProps) {
+        let canvasHandler = initialProps.oncanvas
+        if (typeof canvasHandler !== 'function') {
+          canvasHandler = initialProps.onCanvas
+        }
+        if (typeof canvasHandler === 'function') {
+          var canvas = layer.getCanvas().getContext().canvas._canvas
+          canvasHandler(canvas)
+        }
       }
     }
 

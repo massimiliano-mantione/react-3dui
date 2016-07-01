@@ -66,7 +66,7 @@ var App = React.createClass({
       <div>
         <p>Hello</p>
         <Stage width={300} height={200} style={stageStyle}>
-          <Layer style={layerStyle} canvasHandler={this.props.canvasHandler} drawHandler={this.props.drawHandler}>
+          <Layer style={layerStyle} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
             <Group style={shapeGroupStyle}>
               <MyRect style={shapeStyle}/>
               <Group style={lineStyle}>

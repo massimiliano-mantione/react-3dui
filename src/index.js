@@ -72,7 +72,8 @@ var App2d = React.createClass({
               <Group style={horizontalStyler()}>
                 <Text style={textStyler()} text={'Before...'} fill={'black'} align={'center'} fontSize={20}/>
                 <Group style={flatStyler({autoClip: true})}>
-                  <Circle style={flexStyler()} fill={'black'} stroke={'red'} radius={45} />
+                  <Circle fill={'black'} stroke={'red'} radius={5} y={10} />
+                  <Circle fill={'black'} stroke={'red'} radius={10} x={10} />
                 </Group>
                 <Text style={textStyler()} text={'...after'} fill={'black'} align={'center'} fontSize={20}/>
               </Group>

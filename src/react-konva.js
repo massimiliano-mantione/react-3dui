@@ -158,11 +158,13 @@ function createLayoutNode (konvaNode, keepSize) {
   if (typeof konvaNode.getChildren === 'function') {
     let konvaNodeChildren = konvaNode.getChildren()
     konvaNodeChildren.forEach(function (child) {
-      let childLayout = createLayoutNode(child, false)
-      if (result.style.flat) {
-        subRoots.push(childLayout)
-      } else {
-        children.push(childLayout)
+      if (child.reactElement && child.reactElement.hasStyle()) {
+        let childLayout = createLayoutNode(child, false)
+        if (result.style.flat) {
+          subRoots.push(childLayout)
+        } else {
+          children.push(childLayout)
+        }
       }
     })
   }

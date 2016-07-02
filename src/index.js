@@ -50,8 +50,17 @@ var App2d = React.createClass({
   // Layer - is a <canvas> element on the page
   // so you can use several canvases. It may help you to improve performance a lot.
 
-  // <Circle style={shapeStyle} radius={20} width={40} height={40} fill={'black'}/>
-  // <Rect style={{flex: 1}} fill={'yellow'} />
+  // <Rect style={shapeStyler1()} x={10} y={10} width={200} height={30} fill={'red'}/>
+  // <Text style={textStyler()} text={'Hola!'} fill={'black'} align={'center'} fontSize={8}/>
+  // <Rect style={shapeStyler1()} fill={'blue'}/>
+  // <Text style={textStyler()} text={'...halo'} fill={'black'} fontSize={8}/>
+  // <Group style={flatStyler({autoClip: true})}>
+  //   <Rect style={flexStyler({left: 5, top: 5, right: -5, bottom: -5})} fill={'red'} />
+  // <Rect style={shapeStyler1({left: 0, width: 40})}/>
+  // <Rect style={shapeStyler1({left: 80, width: 40})}/>
+  // <Rect style={shapeStyler1({left: 40, width: 40})}/>
+  // <Rect style={shapeStyler1({left: 120, width: 40})}/>
+  // </Group>
 
   render: function () {
     return (
@@ -59,23 +68,26 @@ var App2d = React.createClass({
         <p>Hello</p>
         <Stage width={300} height={200} style={stageStyler()}>
           <Layer style={verticalStyler()} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
-            <Group style={flatStyler()}>
-              <MyRect style={shapeStyler1()}/>
-              <Group style={horizontalStyler()}>
-                <Text style={textStyler()} text={'Hola!'} fill={'black'} align={'center'} fontSize={24}/>
-                <MyRect style={shapeStyler1()}/>
-                <Text style={textStyler()} text={'...halo'} fill={'black'} fontSize={24}/>
+            <Group style={flatStyler({autoClip: true})}>
+              <Circle fill={'black'} stroke={'red'} radius={5} x={0} y={10} />
+              <Circle fill={'black'} stroke={'red'} radius={10} x={10} y={0} />
+              <Circle fill={'black'} stroke={'red'} radius={5} x={300} y={10} />
+              <Circle fill={'black'} stroke={'red'} radius={10} x={300} y={0} />
+              <Group x={0} y={0} width={300} height={300}>
+                <Group style={horizontalStyler()} x={5} y={5} width={200} height={30}>
+                  <Text style={textStyler()} text={'Hola!'} fill={'black'} align={'center'} fontSize={14}/>
+                  <Rect style={shapeStyler1()} fill={'blue'}/>
+                  <Text style={textStyler()} text={'...halo'} fill={'black'} fontSize={14}/>
+                </Group>
               </Group>
             </Group>
-            <Group style={flatStyler()}>
+            <Group style={flatStyler({autoClip: true})}>
               <Rect style={flexStyler()} fill={'yellow'} />
-              <Group style={horizontalStyler()}>
-                <Text style={textStyler()} text={'Before...'} fill={'black'} align={'center'} fontSize={20}/>
-                <Group style={flatStyler({autoClip: true})}>
-                  <Circle fill={'black'} stroke={'red'} radius={5} y={10} />
-                  <Circle fill={'black'} stroke={'red'} radius={10} x={10} />
-                </Group>
-                <Text style={textStyler()} text={'...after'} fill={'black'} align={'center'} fontSize={20}/>
+              <Group style={flatStyler({left: -10})}>
+                <Rect style={flexStyler({left: 0, width: 40})} fill={'blue'}/>
+                <Rect style={flexStyler({left: 40, width: 40})} fill={'red'}/>
+                <Rect style={flexStyler({left: 80, width: 40})} fill={'black'}/>
+                <Rect style={flexStyler({left: 120, width: 40})} fill={'white'}/>
               </Group>
             </Group>
             <MyRect style={shapeStyler1()}/>

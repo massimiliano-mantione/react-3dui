@@ -90,7 +90,15 @@ var App2d = React.createClass({
                 <Rect style={flexStyler({left: 120, width: 40})} fill={'white'}/>
               </Group>
             </Group>
-            <MyRect style={shapeStyler1()}/>
+            <Group style={flatStyler({autoClip: true})}>
+              <Rect style={flexStyler()} fill={'green'} />
+              <Group style={flatStyler({proportionalRight: 0, proportionalRightAnchor: 0, width: 160})}>
+                <Rect style={flexStyler({left: 0, width: 40})} fill={'blue'}/>
+                <Rect style={flexStyler({left: 40, width: 40})} fill={'red'}/>
+                <Rect style={flexStyler({left: 80, width: 40})} fill={'black'}/>
+                <Rect style={flexStyler({left: 120, width: 40})} fill={'white'}/>
+              </Group>
+            </Group>
             <MyRect style={shapeStyler1()}/>
             <MyRect style={shapeStyler1()}/>
             <MyRect style={shapeStyler2()}/>

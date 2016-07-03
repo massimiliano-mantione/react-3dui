@@ -3,10 +3,26 @@ import ReactDOM from 'react-dom'
 import TestComponent from './testComponent'
 import BABYLON from 'babylonjs'
 
-var App = React.createClass({
+var BabylonScene = React.createClass({
+  propTypes: {
+    setCanvasCallbacks: React.PropTypes.func.isRequired
+  },
+
   canvas3d: null,
   canvas2d: null,
   dynamicTexture: null,
+
+  componentDidMount: function () {
+    var self = this
+    this.props.setCanvasCallbacks(
+      (canvas2d) => {
+        self.setup(canvas2d)
+      },
+      () => {
+        self.updateDynamicTexture()
+      }
+    )
+  },
 
   setup: function (canvas2d) {
     var canvas3d = this.canvas3d
@@ -62,9 +78,32 @@ var App = React.createClass({
 
   render: function () {
     return (
+      <canvas style={{width: 600, height: 400}} ref={(c) => { this.canvas3d = c }} />
+    )
+  }
+})
+
+var App = React.createClass({
+  actualCanvasHandler: null,
+  actualDrawHandler: null,
+
+  canvasHandler: function (canvas2d) {
+    this.actualCanvasHandler(canvas2d)
+  },
+  drawHandler: function () {
+    this.actualDrawHandler()
+  },
+
+  setActualHandlers: function (canvasHandler, drawHandler) {
+    this.actualCanvasHandler = canvasHandler
+    this.actualDrawHandler = drawHandler
+  },
+
+  render: function () {
+    return (
       <div>
-        <canvas style={{width: 600, height: 400}} ref={(c) => { this.canvas3d = c }} />
-        <TestComponent canvasHandler={(c) => { this.setup(c) }} drawHandler={() => { this.updateDynamicTexture() }} />
+        <BabylonScene setCanvasCallbacks={this.setActualHandlers} />
+        <TestComponent canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
       </div>
     )
   }

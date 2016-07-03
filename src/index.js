@@ -21,9 +21,18 @@ var App = React.createClass({
 
   render: function () {
     return (
-      <div>
-        <BabylonScene setCanvasCallbacks={this.setActualHandlers} />
-        <TestComponent canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
+      <div className={'container row'}>
+        <div className={'container column'}>
+          <p>Babylon</p>
+          <BabylonScene setCanvasCallbacks={this.setActualHandlers} />
+        </div>
+        <div className={'container column'}>
+          <p>Canvas</p>
+          <TestComponent canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
+        </div>
+        <div className={'container column'}>
+          <p>DOM</p>
+        </div>
       </div>
     )
   }

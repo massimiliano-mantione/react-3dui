@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import TestComponent from './testComponent'
 import BabylonScene from './babylonScene'
+import TodoApp from './todoApp'
 
 var App = React.createClass({
   actualCanvasHandler: null,
@@ -32,6 +33,7 @@ var App = React.createClass({
         </div>
         <div className={'container column'}>
           <p>DOM</p>
+          <TodoApp/>
         </div>
       </div>
     )

@@ -4,11 +4,12 @@ import TestComponent from './testComponent'
 import BABYLON from 'babylonjs'
 
 var App = React.createClass({
+  canvas3d: null,
   canvas2d: null,
   dynamicTexture: null,
 
   setup: function (canvas2d) {
-    var canvas3d = document.getElementById('container3d')
+    var canvas3d = this.canvas3d
     var engine = new BABYLON.Engine(canvas3d, true)
 
     this.canvas2d = canvas2d
@@ -60,8 +61,13 @@ var App = React.createClass({
   },
 
   render: function () {
-    return <TestComponent canvasHandler={(c) => { this.setup(c) }} drawHandler={() => { this.updateDynamicTexture() }} />
+    return (
+      <div>
+        <canvas style={{width: 600, height: 400}} ref={(c) => { this.canvas3d = c }} />
+        <TestComponent canvasHandler={(c) => { this.setup(c) }} drawHandler={() => { this.updateDynamicTexture() }} />
+      </div>
+    )
   }
 })
 
-ReactDOM.render(<App/>, document.getElementById('container2d'))
+ReactDOM.render(<App/>, document.getElementById('app'))

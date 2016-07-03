@@ -64,7 +64,7 @@ var TestComponent = React.createClass({
     return (
       <div>
         <p>Hello</p>
-        <Stage width={300} height={200} style={stageStyler()}>
+        <Stage width={600} height={400} style={stageStyler()}>
           <Layer style={verticalStyler()} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
             <Group style={flatStyler({autoClip: true})}>
               <Circle fill={'black'} stroke={'red'} radius={5} x={0} y={10} />

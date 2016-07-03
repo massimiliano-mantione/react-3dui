@@ -1,12 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import TestComponent from './testComponent'
+import {createDispatcher} from './todoLogic'
 import BabylonScene from './babylonScene'
-import TodoApp from './todoApp'
+import CanvasView from './canvasView'
+import TodoDomView from './todoDomView'
 
 var App = React.createClass({
   actualCanvasHandler: null,
   actualDrawHandler: null,
+
+  getInitialState: function () {
+    this.dispatch = createDispatcher((state) => this.setState(state))
+    return this.dispatch('getState')
+  },
 
   canvasHandler: function (canvas2d) {
     this.actualCanvasHandler(canvas2d)
@@ -29,11 +35,11 @@ var App = React.createClass({
         </div>
         <div className={'container column'}>
           <p>Canvas</p>
-          <TestComponent canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
+          <CanvasView dispatch={this.dispatch} canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
         </div>
         <div className={'container column'}>
           <p>DOM</p>
-          <TodoApp/>
+          <TodoDomView dispatch={this.dispatch}/>
         </div>
       </div>
     )

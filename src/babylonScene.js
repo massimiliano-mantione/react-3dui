@@ -76,7 +76,7 @@ var BabylonScene = React.createClass({
 
   render: function () {
     return (
-      <canvas style={{width: 600, height: 400}} ref={(c) => { this.canvas3d = c }} />
+      <canvas style={{width: '100%', height: '100%'}} ref={(c) => { this.canvas3d = c }} />
     )
   }
 })

@@ -16,7 +16,7 @@ var CanvasView = React.createClass({
 
   render: function () {
     return (
-      <Stage width={600} height={400} style={stageStyler()}>
+      <Stage width={300} height={200} style={stageStyler()}>
         <Layer style={flexStyler()} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
           <TodoCanvasView dispatch = {this.props.dispatch}/>
         </Layer>

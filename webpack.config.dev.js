@@ -38,6 +38,16 @@ module.exports = {
       {
         test: /\.json$/,
         loaders: ['json']
+      },
+
+      // css loader
+      {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader'
+      },
+      {
+        test: /\.(png|woff|woff2|eot|ttf|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file'
       }
     ]
   }

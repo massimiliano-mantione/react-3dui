@@ -1,7 +1,34 @@
 import React from 'react'
 
+import {Styler} from 'debonair'
+let createStyler = Styler.create
+let baseRowStyler = createStyler({
+  display: 'flex',
+  flexDirection: 'row'
+})
+function rowStyler (scale) {
+  return baseRowStyler({
+    transform: 'scaleY(' + scale + ')',
+    justifyContent: 'center',
+    alignItems: 'stretch',
+    flex: scale
+  })
+}
+let columnStyler = createStyler({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-start',
+  alignItems: 'stretch'
+})
+let descriptionStyler = createStyler({
+  flex: 1
+})
+
+import listElementScale from './listElementScale'
+
 let TodoElement = React.createClass({
   propTypes: {
+    scale: React.PropTypes.number.isRequired,
     todo: React.PropTypes.object.isRequired,
     dispatch: React.PropTypes.func.isRequired
   },
@@ -9,14 +36,14 @@ let TodoElement = React.createClass({
   render: function () {
     let {todo, dispatch} = this.props
     return (
-      <tr>
-        <td>{todo.text}</td>
-        <td>
+      <div style={rowStyler(this.props.scale)}>
+        <div style={descriptionStyler()}>{todo.text}</div>
+        <div>
           <button onClick={() => dispatch('toggle', todo.id)} type='button' className='btn btn-default'>
             <span className={todo.done ? 'glyphicon glyphicon-ok' : 'glyphicon glyphicon-remove'}></span>
           </button>
-        </td>
-      </tr>
+        </div>
+      </div>
     )
   }
 })
@@ -47,11 +74,18 @@ let TodoDomView = React.createClass({
             }} />
         </div>
         <div className='panel-body'>
-          <table className='table table-striped' fill responsive>
-            {state.todos.map((todo) => {
-              return <TodoElement todo={todo} dispatch={dispatch} key={todo.id}/>
-            })}
-          </table>
+          <div style={columnStyler()}>
+          {
+            state.todos.reduce((todos, todo, todoIndex) => {
+              console.log('state.todos.reduce', todos)
+              let scale = listElementScale(3, state.scroll, todoIndex)
+              if (scale > 0) {
+                todos.push(<TodoElement todo={todo} dispatch={dispatch} key={todo.id} scale={scale}/>)
+              }
+              return todos
+            }, [])
+          }
+          </div>
         </div>
         <div className='panel-footer'>
           <button onClick={() => dispatch('removeDone')}>REMOVE DONE</button>

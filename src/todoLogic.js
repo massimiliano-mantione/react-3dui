@@ -68,6 +68,19 @@ function removeLastTextCharacter (state) {
   return buildState(state.nextId, state.text.slice(0, -1), state.todos, state.scroll)
 }
 
+function moveScroll (state, movement, listSize) {
+  let scroll = state.scroll + movement
+  if (scroll < 0) {
+    scroll = 0
+  } else {
+    let upperLimit = state.todos.length - listSize
+    if (scroll > upperLimit) {
+      scroll = upperLimit
+    }
+  }
+  return buildState(state.nextId, state.text, state.todos, scroll)
+}
+
 let actions = {
   getState,
   addCurrent,
@@ -75,13 +88,14 @@ let actions = {
   removeDone,
   setText,
   appendText,
-  removeLastTextCharacter
+  removeLastTextCharacter,
+  moveScroll
 }
 
 function createDispatcher (stateHandler) {
   let state = initialState()
-  return function dispatch (action, argument) {
-    let newState = actions[action](state, argument)
+  return function dispatch (action, argument1, argument2) {
+    let newState = actions[action](state, argument1, argument2)
     if (state !== newState) {
       state = newState
       stateHandler(state)

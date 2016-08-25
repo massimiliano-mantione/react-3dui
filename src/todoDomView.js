@@ -1,24 +1,28 @@
 import React from 'react'
 
+const LIST_SIZE = 3.50
+const ROW_HEIGTH = 40
+
 import {Styler} from 'debonair'
 let createStyler = Styler.create
 let baseRowStyler = createStyler({
   display: 'flex',
-  flexDirection: 'row'
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center'
 })
 function rowStyler (scale) {
   return baseRowStyler({
     transform: 'scaleY(' + scale + ')',
-    justifyContent: 'center',
-    alignItems: 'stretch',
-    flex: scale
+    height: ROW_HEIGTH * scale
   })
 }
-let columnStyler = createStyler({
+let listStyler = createStyler({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-start',
-  alignItems: 'stretch'
+  alignItems: 'stretch',
+  height: ROW_HEIGTH * LIST_SIZE
 })
 let descriptionStyler = createStyler({
   flex: 1
@@ -48,6 +52,20 @@ let TodoElement = React.createClass({
   }
 })
 
+let previousY = -1
+function mouseMoveHandler (e, dispatch) {
+  console.log('mouseMoveHandler', e.buttons, e.clientY)
+  if (e.buttons === 1) {
+    let y = e.clientY
+    if (previousY >= 0 && y > 0) {
+      let delta = y - previousY
+      dispatch('moveScroll', -delta / ROW_HEIGTH, LIST_SIZE)
+      e.preventDefault()
+    }
+    previousY = y
+  }
+}
+
 let TodoDomView = React.createClass({
   propTypes: {
     dispatch: React.PropTypes.func.isRequired
@@ -74,11 +92,16 @@ let TodoDomView = React.createClass({
             }} />
         </div>
         <div className='panel-body'>
-          <div style={columnStyler()}>
+          <div
+            style={listStyler()}
+            onMouseMove={function (e) {
+              mouseMoveHandler(e, dispatch)
+            }}
+          >
           {
             state.todos.reduce((todos, todo, todoIndex) => {
               console.log('state.todos.reduce', todos)
-              let scale = listElementScale(3, state.scroll, todoIndex)
+              let scale = listElementScale(LIST_SIZE, state.scroll, todoIndex)
               if (scale > 0) {
                 todos.push(<TodoElement todo={todo} dispatch={dispatch} key={todo.id} scale={scale}/>)
               }

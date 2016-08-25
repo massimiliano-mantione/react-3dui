@@ -1,20 +1,23 @@
-function outerElementScale (elementIndex) {
-  if (elementIndex < 0) {
+function outerElementScale (elementPosition) {
+  if (elementPosition < 0) {
     return 1
-  } else if (elementIndex >= 3) {
+  } else if (elementPosition >= 1) {
     return 0
   } else {
-    return 0.5 - (elementIndex / 6)
+    return 1 - elementPosition
   }
 }
 
 function listElementScale (windowSize, windowPosition, elementIndex) {
   if (elementIndex < windowPosition) {
     return outerElementScale(windowPosition - elementIndex)
-  } else if (elementIndex >= windowPosition + windowSize) {
-    return outerElementScale(elementIndex - (windowPosition + windowSize))
   } else {
-    return 1
+    let windowEnd = windowPosition + (windowSize - 1)
+    if (elementIndex >= windowEnd) {
+      return outerElementScale(elementIndex - windowEnd)
+    } else {
+      return 1
+    }
   }
 }
 

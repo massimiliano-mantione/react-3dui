@@ -65,7 +65,6 @@ var BabylonScene = React.createClass({
     sphereMat.specularColor = new BABYLON.Color3(0, 0, 0)
     sphere.material = sphereMat
     sphere.renderingGroupId = 1
-    sphere.position.y = 1
 
     // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
     var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene)
@@ -80,7 +79,24 @@ var BabylonScene = React.createClass({
     mat.diffuseTexture.hasAlpha = true
     ground.material = mat
 
+    function animatePositions () {
+      var t = Date.now()
+      var p5 = 2 * Math.PI * (t % 5000) / 5000
+      var p10 = 2 * Math.PI * (t % 10000) / 10000
+      var p20 = 2 * Math.PI * (t % 20000) / 20000
+      ground.rotation.x = -((Math.PI / 2) * 0.9)
+      ground.rotation.x += Math.sin(p5) * 0.1
+      ground.rotation.z = Math.sin(p20) * 0.05
+
+      sphere.rotation.x = Math.PI / 2
+      sphere.rotation.y = p5
+      sphere.position.x = 4 * Math.sin(p20)
+      sphere.position.y = 1 + -2 * Math.cos(p20)
+      sphere.position.z = -4 * Math.cos(p20)
+    }
+
     engine.runRenderLoop(function () {
+      animatePositions()
       scene.render()
     })
     window.addEventListener('resize', function () {

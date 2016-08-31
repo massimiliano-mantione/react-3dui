@@ -44,12 +44,32 @@ var BabylonScene = React.createClass({
     light1.specular = new BABYLON.Color3(1, 1, 1)
     light1.groundColor = new BABYLON.Color3(0, 0, 0)
 
+    // create skybox
+    var skybox = BABYLON.Mesh.CreateBox('skyBox', 100.0, scene)
+    skybox.renderingGroupId = 0
+    var skyboxMaterial = new BABYLON.StandardMaterial('skyBox', scene)
+    skyboxMaterial.backFaceCulling = false
+    skyboxMaterial.disableLighting = true
+    skybox.material = skyboxMaterial
+    skybox.infiniteDistance = true
+    skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0)
+    skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0)
+    skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture('static/textures/skybox', scene)
+    skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE
+
     // create a built-in "sphere" shape; its constructor takes 5 params: name, width, depth, subdivisions, scene
     var sphere = BABYLON.Mesh.CreateSphere('sphere1', 16, 2, scene)
+    var sphereMat = new BABYLON.StandardMaterial('sphereMat', scene)
+    sphereMat.alpha = 1
+    sphereMat.diffuseTexture = new BABYLON.Texture('static/textures/moonmap1k.jpg', scene)
+    sphereMat.specularColor = new BABYLON.Color3(0, 0, 0)
+    sphere.material = sphereMat
+    sphere.renderingGroupId = 1
     sphere.position.y = 1
 
     // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
     var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene)
+    ground.renderingGroupId = 1
     var mat = new BABYLON.StandardMaterial('mat1', scene)
     mat.alpha = 1.0
     mat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)

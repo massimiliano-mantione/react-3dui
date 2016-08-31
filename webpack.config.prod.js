@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+var CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   devtool: 'source-map',
@@ -12,6 +13,7 @@ module.exports = {
     publicPath: '/static/'
   },
   plugins: [
+    new CopyWebpackPlugin([{from: 'textures', to: 'textures'}]),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {

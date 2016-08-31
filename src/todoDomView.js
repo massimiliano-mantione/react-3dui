@@ -28,7 +28,7 @@ let descriptionStyler = createStyler({
   flex: 1
 })
 
-import listElementScale from './listElementScale'
+import {listElementScale} from './listElementScale'
 
 let TodoElement = React.createClass({
   propTypes: {
@@ -38,9 +38,9 @@ let TodoElement = React.createClass({
   },
 
   render: function () {
-    let {todo, dispatch} = this.props
+    let {scale, todo, dispatch} = this.props
     return (
-      <div style={rowStyler(this.props.scale)}>
+      <div style={rowStyler(scale)}>
         <div style={descriptionStyler()}>{todo.text}</div>
         <div>
           <button onClick={() => dispatch('toggle', todo.id)} type='button' className='btn btn-default'>
@@ -54,7 +54,6 @@ let TodoElement = React.createClass({
 
 let previousY = -1
 function mouseMoveHandler (e, dispatch) {
-  console.log('mouseMoveHandler', e.buttons, e.clientY)
   if (e.buttons === 1) {
     let y = e.clientY
     if (previousY >= 0 && y > 0) {
@@ -100,7 +99,6 @@ let TodoDomView = React.createClass({
           >
           {
             state.todos.reduce((todos, todo, todoIndex) => {
-              console.log('state.todos.reduce', todos)
               let scale = listElementScale(LIST_SIZE, state.scroll, todoIndex)
               if (scale > 0) {
                 todos.push(<TodoElement todo={todo} dispatch={dispatch} key={todo.id} scale={scale}/>)

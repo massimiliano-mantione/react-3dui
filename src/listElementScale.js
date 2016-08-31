@@ -21,4 +21,18 @@ function listElementScale (windowSize, windowPosition, elementIndex) {
   }
 }
 
-module.exports = listElementScale
+function listElementPosition (windowSize, windowPosition, elementIndex) {
+  if (elementIndex <= windowPosition) {
+    return 0
+  } else {
+    let windowStartIndex = Math.floor(windowPosition)
+    let elementIndexInWindow = elementIndex - windowStartIndex
+    let initialPartialElementSize = listElementScale(windowSize, windowPosition, windowStartIndex)
+    return initialPartialElementSize + elementIndexInWindow - 1
+  }
+}
+
+module.exports = {
+  listElementScale,
+  listElementPosition
+}

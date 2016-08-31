@@ -226,15 +226,23 @@ function applySizeToStyle (konvaNode, style, keepSize) {
   if (keepSize || nodeHasOwnSize(konvaNode)) {
     if (typeof style.left !== 'number') {
       style.left = konvaNode.x()
+    } else {
+      konvaNode.x(style.left)
     }
     if (typeof style.top !== 'number') {
       style.top = konvaNode.y()
+    } else {
+      konvaNode.y(style.top)
     }
     if (typeof style.width !== 'number') {
       style.width = konvaNode.width()
+    } else {
+      konvaNode.width(style.width)
     }
     if (typeof style.height !== 'number') {
       style.height = konvaNode.height()
+    } else {
+      konvaNode.height(style.height)
     }
   } else if (nodeHasMinimumSize(konvaNode)) {
     style.minWidth = konvaNode.width()

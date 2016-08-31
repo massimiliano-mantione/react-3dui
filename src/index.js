@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 import {Row, Col, Panel} from 'react-bootstrap'
 import {createDispatcher} from './todoLogic'
 import BabylonScene from './babylonScene'
-import CanvasView from './canvasView'
+import TodoCanvasView from './todoCanvasView'
 import TodoDomView from './todoDomView'
 
 require('./bootstrap.min.css')
@@ -34,7 +34,7 @@ var App = React.createClass({
     return <BabylonScene setCanvasCallbacks={this.setActualHandlers} />
   },
   renderCanvas: function () {
-    return <CanvasView dispatch={this.dispatch} canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
+    return <TodoCanvasView dispatch={this.dispatch} canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
   },
   renderDOM: function () {
     return <TodoDomView dispatch={this.dispatch}/>

@@ -14,11 +14,11 @@ const FOOTER_HEIGTH = LINE_HEIGTH
 const PANEL_WIDTH = 300
 const PANEL_HEIGTH = HEADER_HEIGTH + LIST_HEIGTH + FOOTER_HEIGTH + (3 * GAP_HEIGTH)
 
-const BACKGROUND_COLOR = 'white'
-const BACKGROUND_LINE_COLOR = 'grey'
-const TEXT_COLOR = 'black'
-const OVER_COLOR = 'white'
-const CLICK_COLOR = 'white'
+const BACKGROUND_COLOR = '#FFFFFF'
+const BACKGROUND_LINE_COLOR = '#808080'
+const TEXT_COLOR = '#000000'
+const OVER_COLOR = '#C0C0C0'
+const CLICK_COLOR = '#404040'
 
 let createStyler = Styler.create
 
@@ -42,6 +42,13 @@ let PanelRow = React.createClass({
     onMousemove: React.PropTypes.func
   },
 
+  getInitialState: function () {
+    return {
+      mouseIsOver: false,
+      mouseIsClicked: false
+    }
+  },
+
   render: function () {
     let {y, scaleY, width, height, fill, overFill, stroke, overStroke, children, onClick, onMousemove} = this.props
     if (scaleY === undefined) {
@@ -60,11 +67,46 @@ let PanelRow = React.createClass({
       overStroke = stroke
     }
     let listening = (typeof onClick === 'function') || (typeof onMousemove === 'function')
+
+    let onMouseInEvent = (e) => {
+      let newState = {
+        mouseIsOver: true,
+        mouseIsClicked: e.evt.buttons === 1
+      }
+      if (this.state.mouseIsOver !== newState.mouseIsOver || this.state.mouseIsClicked !== newState.mouseIsClicked) {
+        this.setState(newState)
+      }
+    }
+    let onMouseOutEvent = (e) => {
+      let newState = {
+        mouseIsOver: false,
+        mouseIsClicked: false
+      }
+      if (this.state.mouseIsOver !== newState.mouseIsOver || this.state.mouseIsClicked !== newState.mouseIsClicked) {
+        this.setState(newState)
+      }
+    }
+
+    if (this.state.mouseIsOver) {
+      stroke = overStroke
+    }
+    if (this.state.mouseIsClicked) {
+      fill = overFill
+    }
+
     return (
       <Group y={y} scaleY={scaleY}>
         <Rect
           onClick={onClick}
-          onMousemove={onMousemove}
+          onMousedown={onMouseInEvent}
+          onMouseup={onMouseInEvent}
+          onMousemove={(e) => {
+            if (typeof onMousemove === 'function') {
+              onMousemove(e)
+            }
+            onMouseInEvent(e)
+          }}
+          onMouseout={onMouseOutEvent}
           listening={listening}
           fill={fill}
           stroke={stroke}
@@ -86,7 +128,7 @@ let PanelHeader = React.createClass({
   render: function () {
     let {children, onClick} = this.props
     return (
-      <PanelRow onClick={onClick} y={GAP_HEIGTH} fill={BACKGROUND_LINE_COLOR} stroke={BACKGROUND_LINE_COLOR} height={HEADER_HEIGTH} width={PANEL_WIDTH}>
+      <PanelRow onClick={onClick} y={GAP_HEIGTH} fill={BACKGROUND_LINE_COLOR} overFill={CLICK_COLOR} stroke={BACKGROUND_LINE_COLOR} overStroke={OVER_COLOR} height={HEADER_HEIGTH} width={PANEL_WIDTH}>
         {children}
       </PanelRow>
     )
@@ -100,7 +142,7 @@ let PanelFooter = React.createClass({
   render: function () {
     let {y, children, onClick} = this.props
     return (
-      <PanelRow onClick={onClick} y={y} fill={BACKGROUND_LINE_COLOR} stroke={BACKGROUND_LINE_COLOR} height={HEADER_HEIGTH} width={PANEL_WIDTH}>
+      <PanelRow onClick={onClick} y={y} fill={BACKGROUND_LINE_COLOR} overFill={CLICK_COLOR} stroke={BACKGROUND_LINE_COLOR} overStroke={OVER_COLOR} height={HEADER_HEIGTH} width={PANEL_WIDTH}>
         {children}
       </PanelRow>
     )
@@ -123,12 +165,11 @@ let PanelBody = React.createClass({
 
 let HeaderText = React.createClass({
   propTypes: {
-    onClick: React.PropTypes.func,
     text: React.PropTypes.string.isRequired,
     align: React.PropTypes.string
   },
   render: function () {
-    let {text, align, onClick} = this.props
+    let {text, align} = this.props
     if (typeof align !== 'string') {
       align = 'center'
     }
@@ -146,12 +187,11 @@ let HeaderText = React.createClass({
 })
 let TodoText = React.createClass({
   propTypes: {
-    onClick: React.PropTypes.func,
     text: React.PropTypes.string.isRequired,
     align: React.PropTypes.string
   },
   render: function () {
-    let {text, align, onClick} = this.props
+    let {text, align} = this.props
     if (typeof align !== 'string') {
       align = 'center'
     }
@@ -163,7 +203,7 @@ let TodoText = React.createClass({
     }
     let fontSize = 14
     return (
-      <Text onClick={onClick} style={panelItemStyler()} text={text} fill={TEXT_COLOR} align={align} fontSize={fontSize} offsetY={(fontSize / 2) - (ROW_HEIGTH / 2)}/>
+      <Text listening={false} style={panelItemStyler()} text={text} fill={TEXT_COLOR} align={align} fontSize={fontSize} offsetY={(fontSize / 2) - (ROW_HEIGTH / 2)}/>
     )
   }
 })
@@ -181,10 +221,10 @@ let TodoElement = React.createClass({
     let {y, scale, todo, dispatch, onMousemove} = this.props
     let clickHandler = () => dispatch('toggle', todo.id)
     return (
-      <PanelRow onClick={clickHandler} onMousemove={onMousemove} y={y} scaleY={scale} fill={BACKGROUND_COLOR} stroke={BACKGROUND_LINE_COLOR} height={ROW_HEIGTH} width={PANEL_WIDTH}>
+      <PanelRow onClick={clickHandler} onMousemove={onMousemove} y={y} scaleY={scale} fill={BACKGROUND_COLOR} overFill={OVER_COLOR} stroke={BACKGROUND_LINE_COLOR} overStroke={OVER_COLOR} height={ROW_HEIGTH} width={PANEL_WIDTH}>
         <Group style={rowStyler()} height={ROW_HEIGTH}>
-          <TodoText onClick={clickHandler} text={todo.text} align={'left'}/>
-          <TodoText onClick={clickHandler} text={todo.done ? '\u2713' : '\u2613 '} align={'right'}/>
+          <TodoText text={todo.text} align={'left'}/>
+          <TodoText text={todo.done ? '\u2713' : '\u2613 '} align={'right'}/>
         </Group>
       </PanelRow>
     )

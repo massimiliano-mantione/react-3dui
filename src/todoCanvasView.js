@@ -13,9 +13,12 @@ const HEADER_HEIGTH = LINE_HEIGTH
 const FOOTER_HEIGTH = LINE_HEIGTH
 const PANEL_WIDTH = 300
 const PANEL_HEIGTH = HEADER_HEIGTH + LIST_HEIGTH + FOOTER_HEIGTH + (3 * GAP_HEIGTH)
+
 const BACKGROUND_COLOR = 'white'
 const BACKGROUND_LINE_COLOR = 'grey'
 const TEXT_COLOR = 'black'
+const OVER_COLOR = 'white'
+const CLICK_COLOR = 'white'
 
 let createStyler = Styler.create
 
@@ -33,27 +36,41 @@ let PanelRow = React.createClass({
     height: React.PropTypes.number.isRequired,
     fill: React.PropTypes.string,
     stroke: React.PropTypes.string,
-    dispatch: React.PropTypes.func.isRequired,
-    onClick: React.PropTypes.func
+    overFill: React.PropTypes.string,
+    overStroke: React.PropTypes.string,
+    onClick: React.PropTypes.func,
+    onMousemove: React.PropTypes.func
   },
 
   render: function () {
-    let {y, scaleY, width, height, fill, stroke, children, dispatch, onClick} = this.props
+    let {y, scaleY, width, height, fill, overFill, stroke, overStroke, children, onClick, onMousemove} = this.props
     if (scaleY === undefined) {
       scaleY = 1
     }
     if (fill === undefined) {
       fill = 'white'
     }
+    if (overFill === undefined) {
+      overFill = fill
+    }
     if (stroke === undefined) {
       stroke = 'black'
     }
-    if (dispatch === undefined) {
-      dispatch = () => {}
+    if (overStroke === undefined) {
+      overStroke = stroke
     }
+    let listening = (typeof onClick === 'function') || (typeof onMousemove === 'function')
     return (
       <Group y={y} scaleY={scaleY}>
-        <Rect onClick={onClick} fill={fill} stroke={stroke} height={height} width={width} cornerRadius={5}/>
+        <Rect
+          onClick={onClick}
+          onMousemove={onMousemove}
+          listening={listening}
+          fill={fill}
+          stroke={stroke}
+          height={height}
+          width={width}
+          cornerRadius={5}/>
         <Group style={containerStyler({height: height, width: width})}>
           {children}
         </Group>
@@ -91,12 +108,13 @@ let PanelFooter = React.createClass({
 })
 let PanelBody = React.createClass({
   propTypes: {
-    y: React.PropTypes.number.isRequired
+    y: React.PropTypes.number.isRequired,
+    onMousemove: React.PropTypes.func
   },
   render: function () {
-    let {y, children} = this.props
+    let {y, onMousemove, children} = this.props
     return (
-      <PanelRow y={y} fill={BACKGROUND_COLOR} stroke={BACKGROUND_LINE_COLOR} height={LIST_HEIGTH} width={PANEL_WIDTH}>
+      <PanelRow y={y} onMousemove={onMousemove} fill={BACKGROUND_COLOR} stroke={BACKGROUND_LINE_COLOR} height={LIST_HEIGTH} width={PANEL_WIDTH}>
         {children}
       </PanelRow>
     )
@@ -122,7 +140,7 @@ let HeaderText = React.createClass({
     }
     let fontSize = 16
     return (
-      <Text onClick={onClick} style={panelItemStyler()} text={text} fill={TEXT_COLOR} align={align} fontSize={fontSize} offsetY={(fontSize / 2) - (LINE_HEIGTH / 2)}/>
+      <Text listening={false} style={panelItemStyler()} text={text} fill={TEXT_COLOR} align={align} fontSize={fontSize} offsetY={(fontSize / 2) - (LINE_HEIGTH / 2)}/>
     )
   }
 })
@@ -155,14 +173,15 @@ let TodoElement = React.createClass({
     y: React.PropTypes.number.isRequired,
     scale: React.PropTypes.number.isRequired,
     todo: React.PropTypes.object.isRequired,
-    dispatch: React.PropTypes.func.isRequired
+    dispatch: React.PropTypes.func.isRequired,
+    onMousemove: React.PropTypes.func
   },
 
   render: function () {
-    let {y, scale, todo, dispatch} = this.props
+    let {y, scale, todo, dispatch, onMousemove} = this.props
     let clickHandler = () => dispatch('toggle', todo.id)
     return (
-      <PanelRow onClick={clickHandler} y={y} scaleY={scale} fill={BACKGROUND_COLOR} stroke={BACKGROUND_LINE_COLOR} height={ROW_HEIGTH} width={PANEL_WIDTH}>
+      <PanelRow onClick={clickHandler} onMousemove={onMousemove} y={y} scaleY={scale} fill={BACKGROUND_COLOR} stroke={BACKGROUND_LINE_COLOR} height={ROW_HEIGTH} width={PANEL_WIDTH}>
         <Group style={rowStyler()} height={ROW_HEIGTH}>
           <TodoText onClick={clickHandler} text={todo.text} align={'left'}/>
           <TodoText onClick={clickHandler} text={todo.done ? '\u2713' : '\u2613 '} align={'right'}/>
@@ -177,7 +196,33 @@ let TodoPanel = React.createClass({
     dispatch: React.PropTypes.func.isRequired
   },
 
+  previousMouseY: -1,
+  onMousemove: function (e, dispatch) {
+    if (e.evt.buttons === 1) {
+      let y = e.evt.layerY
+      if (this.previousMouseY >= 0 && y > 0) {
+        let delta = y - this.previousMouseY
+        dispatch('moveScroll', -delta / ROW_HEIGTH, LIST_SIZE)
+      }
+      this.previousMouseY = y
+    }
+  },
+
+  panelChildren: function (state, dispatch, panel) {
+    let children = state.todos.reduce((todos, todo, todoIndex) => {
+      let scale = listElementScale(LIST_SIZE, state.scroll, todoIndex)
+      let normalizedY = listElementPosition(LIST_SIZE, state.scroll, todoIndex)
+      let y = normalizedY * ROW_HEIGTH
+      if (scale > 0) {
+        todos.push(<TodoElement todo={todo} dispatch={dispatch} onMousemove={(e) => { panel.onMousemove(e, dispatch) }} key={todo.id} scale={scale} y={y}/>)
+      }
+      return todos
+    }, [])
+    return children
+  },
+
   render: function () {
+    let panel = this
     let dispatch = this.props.dispatch
     let clickHandler = () => dispatch('removeDone')
     let state = this.props.dispatch('getState')
@@ -187,17 +232,9 @@ let TodoPanel = React.createClass({
         <PanelHeader>
           <HeaderText text={state.text} align={'left'}/>
         </PanelHeader>
-        <PanelBody y={HEADER_HEIGTH + (2 * GAP_HEIGTH)}>
+        <PanelBody y={HEADER_HEIGTH + (2 * GAP_HEIGTH)} onMousemove={(e) => { panel.onMousemove(e, dispatch) }}>
           {
-            state.todos.reduce((todos, todo, todoIndex) => {
-              let scale = listElementScale(LIST_SIZE, state.scroll, todoIndex)
-              let normalizedY = listElementPosition(LIST_SIZE, state.scroll, todoIndex)
-              let y = normalizedY * ROW_HEIGTH
-              if (scale > 0) {
-                todos.push(<TodoElement todo={todo} dispatch={dispatch} key={todo.id} scale={scale} y={y}/>)
-              }
-              return todos
-            }, [])
+            panel.panelChildren(state, dispatch, panel)
           }
         </PanelBody>
         <PanelFooter onClick={clickHandler} y={HEADER_HEIGTH + LIST_HEIGTH + (3 * GAP_HEIGTH)}>

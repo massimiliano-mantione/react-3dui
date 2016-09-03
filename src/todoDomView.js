@@ -79,7 +79,7 @@ let TodoDomView = React.createClass({
         <div className='panel-heading'>
           <input
             type={'text'}
-            autoFocus={'true'}
+            autoFocus={'false'}
             value={state.text}
             onChange={function (e) {
               dispatch('setText', e.target.value)

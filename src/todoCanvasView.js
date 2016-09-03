@@ -292,11 +292,43 @@ var TodoCanvasView = React.createClass({
     drawHandler: React.PropTypes.func
   },
 
+  keyPressHandler: function (e) {
+    let {dispatch} = this.props
+    if (e.keyCode === 13) {
+      dispatch('addCurrent')
+    } else if (e.keyCode === 8) {
+      dispatch('removeLastTextCharacter')
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    } else if (e.key.length === 1) {
+      dispatch('appendText', e.key)
+    }
+  },
+  focus: function () {
+    document.body.addEventListener('keydown', this.keyPressHandler)
+  },
+  blur: function () {
+    document.body.removeEventListener('keydown', this.keyPressHandler)
+  },
+
   render: function () {
+    let {dispatch, canvasHandler, drawHandler} = this.props
     return (
       <Stage width={PANEL_WIDTH} height={PANEL_HEIGTH * 2} style={stageStyler()}>
-        <Layer style={flexStyler()} oncanvas={this.props.canvasHandler} ondraw={this.props.drawHandler}>
-          <TodoPanel dispatch = {this.props.dispatch}/>
+        <Layer
+            style={flexStyler()}
+            oncanvas={(c) => {
+              c.addEventListener('mouseover', (e) => {
+                this.focus()
+              })
+              c.addEventListener('mouseout', (e) => {
+                this.blur()
+              })
+              canvasHandler(c)
+            }}
+            ondraw={drawHandler}>
+          <TodoPanel dispatch={dispatch}/>
         </Layer>
       </Stage>
     )

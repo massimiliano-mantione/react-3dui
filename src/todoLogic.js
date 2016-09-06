@@ -78,7 +78,11 @@ function moveScroll (state, movement, listSize) {
       scroll = upperLimit
     }
   }
-  return buildState(state.nextId, state.text, state.todos, scroll)
+  if (scroll !== state.scroll) {
+    return buildState(state.nextId, state.text, state.todos, scroll)
+  } else {
+    return state
+  }
 }
 
 let actions = {
@@ -97,6 +101,7 @@ function createDispatcher (stateHandler) {
   return function dispatch (action, argument1, argument2) {
     let newState = actions[action](state, argument1, argument2)
     if (state !== newState) {
+      console.log('dispatch', action, newState)
       state = newState
       stateHandler(state)
     }

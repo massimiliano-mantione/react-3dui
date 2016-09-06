@@ -1,14 +1,62 @@
 import React from 'react'
 import BABYLON from 'babylonjs'
 
+var mouseEventKeys = [
+  'altKey',
+  'bubbles',
+  'button',
+  'buttons',
+  'cancelBubble',
+  'cancelable',
+  'clientX',
+  'clientY',
+  'ctrlKey',
+  'currentTarget',
+  'defaultPrevented',
+  'detail',
+  'eventPhase',
+  'fromElement',
+  'isTrusted',
+  'layerX',
+  'layerY',
+  'metaKey',
+  'movementX',
+  'movementY',
+  'offsetX',
+  'offsetY',
+  'pageX',
+  'pageY',
+  'screenX',
+  'screenY',
+  'shiftKey',
+  'srcElement',
+  'target',
+  'timeStamp',
+  'toElement',
+  'type',
+  'view',
+  'which',
+  'x',
+  'y'
+]
+
 var BabylonScene = React.createClass({
   propTypes: {
-    setCanvasCallbacks: React.PropTypes.func.isRequired
+    setCanvasCallbacks: React.PropTypes.func.isRequired,
+    pointerEventHandler: React.PropTypes.func.isRequired
   },
 
   canvas3d: null,
   canvas2d: null,
   dynamicTexture: null,
+  engine: null,
+  scene: null,
+  guiMesh: null,
+  camera: null,
+  pointerX: 0,
+  pointerY: 0,
+  isShiftPressed: false,
+  pointerMovedWithShiftPressed: false,
 
   componentDidMount: function () {
     var self = this
@@ -25,18 +73,21 @@ var BabylonScene = React.createClass({
   setup: function (canvas2d) {
     var canvas3d = this.canvas3d
     var engine = new BABYLON.Engine(canvas3d, true)
+    this.engine = engine
 
     this.canvas2d = canvas2d
 
     // create a basic BJS Scene object
     var scene = new BABYLON.Scene(engine)
+    this.scene = scene
 
     // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
     var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene)
+    this.camera = camera
     // target the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero())
     // attach the camera to the canvas
-    camera.attachControl(canvas3d, false)
+    camera.attachControl(canvas3d, true)
 
     // create a basic light, aiming 0,1,0 - meaning, to the sky
     var light1 = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene)
@@ -68,10 +119,11 @@ var BabylonScene = React.createClass({
 
     // create a built-in "ground" shape; its constructor takes the same 5 params as the sphere's one
     var ground = BABYLON.Mesh.CreateGround('ground1', 6, 6, 2, scene)
+    this.guiMesh = ground
     ground.renderingGroupId = 1
     var mat = new BABYLON.StandardMaterial('mat1', scene)
     mat.alpha = 1.0
-    mat.diffuseColor = new BABYLON.Color3(0.5, 0.5, 0.5)
+    mat.emissiveColor = new BABYLON.Color3(0.4, 0.4, 0.4)
 
     var texture = new BABYLON.DynamicTexture('texture1', canvas2d, scene)
     this.dynamicTexture = texture
@@ -79,10 +131,34 @@ var BabylonScene = React.createClass({
     mat.diffuseTexture.hasAlpha = true
     ground.material = mat
 
+    scene.onPointerObservable.add((e) => {
+      if (e.type === BABYLON.PointerEventTypes.POINTERMOVE) {
+        let px = e.event.layerX
+        let py = e.event.layerY
+        let picked = this.scene.pick(px, py, (m) => { return m === this.guiMesh }, false, this.camera)
+        if (picked.hit && picked.pickedMesh === this.guiMesh) {
+          let point2d = picked.getTextureCoordinates()
+          let x2d = point2d.x * canvas2d.width
+          let y2d = (1 - point2d.y) * canvas2d.height
+          this.pointerX = x2d
+          this.pointerY = y2d
+          this.props.pointerEventHandler({
+            type: 'pointermove3d',
+            x: x2d,
+            y: y2d,
+            buttons: this.isShiftPressed ? 1 : 0
+          })
+          e.event.preventDefault()
+          // camera.inputs.attached.mouse.detachControl()
+        } else {
+          // camera.inputs.attached.mouse.attachControl()
+        }
+      }
+    })
+
     function animatePositions () {
       var t = Date.now()
       var p5 = 2 * Math.PI * (t % 5000) / 5000
-      var p10 = 2 * Math.PI * (t % 10000) / 10000
       var p20 = 2 * Math.PI * (t % 20000) / 20000
       ground.rotation.x = -((Math.PI / 2) * 0.9)
       ground.rotation.x += Math.sin(p5) * 0.1
@@ -110,9 +186,47 @@ var BabylonScene = React.createClass({
     }
   },
 
+  onCanvas3d: function (c) {
+    c.addEventListener('mouseover', (e) => {
+      this.focus()
+    })
+    c.addEventListener('mouseout', (e) => {
+      this.blur()
+    })
+    this.canvas3d = c
+  },
+
+  keyPressHandler: function (e) {
+    let {dispatch} = this.props
+    this.isShiftPressed = e.shiftKey
+    if (e.keyCode === 13) {
+      dispatch('addCurrent')
+    } else if (e.keyCode === 8) {
+      dispatch('removeLastTextCharacter')
+      e.preventDefault()
+      e.stopPropagation()
+      return false
+    } else if (e.key === 'Shift') {
+      this.props.pointerEventHandler({
+        type: 'pointerpick3d',
+        x: this.pointerX,
+        y: this.pointerY,
+        buttons: 1
+      })
+    } else if (e.key.length === 1) {
+      dispatch('appendText', e.key)
+    }
+  },
+  focus: function () {
+    document.body.addEventListener('keydown', this.keyPressHandler)
+  },
+  blur: function () {
+    document.body.removeEventListener('keydown', this.keyPressHandler)
+  },
+
   render: function () {
     return (
-      <canvas style={{width: '100%', height: '100%'}} ref={(c) => { this.canvas3d = c }} />
+      <canvas style={{width: '100%', height: '100%'}} ref={this.onCanvas3d} />
     )
   }
 })

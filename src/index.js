@@ -12,10 +12,23 @@ require('./bootstrap-theme.min.css')
 var App = React.createClass({
   actualCanvasHandler: null,
   actualDrawHandler: null,
+  actualPointerEventHandler: null,
+  currentState: null,
+  nextState: null,
+
+  handleNextState: function () {
+    if (this.currentState !== this.nextState) {
+      this.currentState = this.nextState
+      this.setState()
+    }
+  },
 
   getInitialState: function () {
-    this.dispatch = createDispatcher((state) => this.setState(state))
-    return this.dispatch('getState')
+    this.dispatch = createDispatcher((state) => {
+      this.nextState = state
+      window.requestAnimationFrame(this.handleNextState)
+    })
+    return {}
   },
 
   canvasHandler: function (canvas2d) {
@@ -31,10 +44,21 @@ var App = React.createClass({
   },
 
   renderBabylon: function () {
-    return <BabylonScene setCanvasCallbacks={this.setActualHandlers} />
+    return <BabylonScene
+      dispatch={this.dispatch}
+      setCanvasCallbacks={this.setActualHandlers}
+      pointerEventHandler={(e) => {
+        if (typeof this.actualPointerEventHandler === 'function') {
+          this.actualPointerEventHandler(e)
+        }
+      }}/>
   },
   renderCanvas: function () {
-    return <TodoCanvasView dispatch={this.dispatch} canvasHandler={(c) => { this.canvasHandler(c) }} drawHandler={() => { this.drawHandler() }} />
+    return <TodoCanvasView
+      dispatch={this.dispatch}
+      canvasHandler={(c) => { this.canvasHandler(c) }}
+      drawHandler={() => { this.drawHandler() }}
+      pointerEventHandler={(h) => { this.actualPointerEventHandler = h }} />
   },
   renderDOM: function () {
     return <TodoDomView dispatch={this.dispatch}/>

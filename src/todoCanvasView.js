@@ -97,6 +97,20 @@ let PanelRow = React.createClass({
     return (
       <Group y={y} scaleY={scaleY}>
         <Rect
+          ref={(r) => {
+            if (r) {
+              r.on('pointermove3d', (e) => {
+                if (typeof onMousemove === 'function') {
+                  onMousemove({evt: {layerX: e.x, layerY: e.y, buttons: e.buttons}})
+                }
+              })
+              r.on('pointerpick3d', (e) => {
+                if (typeof onClick === 'function') {
+                  onClick({evt: {layerX: e.x, layerY: e.y, buttons: e.buttons}})
+                }
+              })
+            }
+          }}
           onClick={onClick}
           onMousedown={onMouseInEvent}
           onMouseup={onMouseInEvent}
@@ -289,7 +303,19 @@ var TodoCanvasView = React.createClass({
   propTypes: {
     dispatch: React.PropTypes.func.isRequired,
     canvasHandler: React.PropTypes.func,
-    drawHandler: React.PropTypes.func
+    drawHandler: React.PropTypes.func,
+    pointerEventHandler: React.PropTypes.func
+  },
+
+  layer: null,
+
+  pointerEventHandler: function (e) {
+    if (this.layer !== null) {
+      let shape = this.layer.getIntersection({x: e.x, y: e.y}, 'Rect')
+      if (shape !== null) {
+        shape.fire(e.type, e)
+      }
+    }
   },
 
   keyPressHandler: function (e) {
@@ -315,8 +341,14 @@ var TodoCanvasView = React.createClass({
   render: function () {
     let {dispatch, canvasHandler, drawHandler} = this.props
     return (
-      <Stage width={PANEL_WIDTH} height={PANEL_HEIGTH * 2} style={stageStyler()}>
+      <Stage width={PANEL_WIDTH} height={PANEL_HEIGTH} style={stageStyler()}>
         <Layer
+            ref={(r) => {
+              this.layer = r
+              if (typeof this.props.pointerEventHandler === 'function') {
+                this.props.pointerEventHandler(this.pointerEventHandler)
+              }
+            }}
             style={flexStyler()}
             oncanvas={(c) => {
               c.addEventListener('mouseover', (e) => {

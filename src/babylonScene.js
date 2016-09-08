@@ -43,8 +43,11 @@ var BabylonScene = React.createClass({
     var scene = new BABYLON.Scene(engine)
     this.scene = scene
 
-    // create a FreeCamera, and set its position to (x:0, y:5, z:-10)
-    var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene)
+    // create a camera (use a FreeCamera, ArcRotateCamera or WebVRFreeCamera)
+    // var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 5, -10), scene)
+    var camera = new BABYLON.ArcRotateCamera('camera1', 0, 0, 0, new BABYLON.Vector3(0, 0, 0), scene)
+    camera.setPosition(new BABYLON.Vector3(0, -1, -10))
+    // var camera = new BABYLON.WebVRFreeCamera('camera1', new BABYLON.Vector3(0, -1, -10), scene)
     this.camera = camera
     // target the camera to scene origin
     camera.setTarget(BABYLON.Vector3.Zero())

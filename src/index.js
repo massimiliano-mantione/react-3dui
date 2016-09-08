@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Row, Col, Panel} from 'react-bootstrap'
+import {Panel} from 'react-bootstrap'
 import {createDispatcher} from './todoLogic'
 import BabylonScene from './babylonScene'
 import TodoCanvasView from './todoCanvasView'
@@ -87,15 +87,11 @@ var App = React.createClass({
     return <TodoDomView dispatch={this.dispatch}/>
   },
 
-  renderFake: function () {
-    return <div>FAKE</div>
-  },
-
-  renderView: function (name, panelId, renderer, md) {
+  renderView: function (name, panelId, renderer, width, left) {
     let showPanel = this.state['show' + panelId]
     return (
-      <Col md={md} style={{display: 'flex', flexDirection: 'column'}}>
-        <Panel fill
+      <div style={{position: 'absolute', width: width, left: left}}>
+        <Panel
             header={
               <div onClick={() => {
                 this.togglePanel(panelId)
@@ -103,27 +99,39 @@ var App = React.createClass({
                 {showPanel ? name : '?'}
               </div>
             }
-            style={{display: 'flex', flexDirection: 'column', flex: 1}}>
-          {renderer()}
-          {showPanel ? null : <div style={{backgroundColor: '#e0e0e0', position: 'absolute', top: '20%', left: 0, width: '100%', height: '80%'}}></div>}
+            style={{
+              margin: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: 1,
+              heigth: '100%'
+            }}>
+          <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                heigth: '100%',
+                visibility: showPanel ? 'visible' : 'hidden'
+              }}>
+            {renderer()}
+          </div>
         </Panel>
-      </Col>
+      </div>
     )
   },
 
   render: function () {
     return (
-      <Col>
-        <Row className={'show-grid'} style={{display: 'flex', flexWrap: 'wrap'}}>
-          {this.renderView('2d Canvas in 3d world', 'BabylonKonva', this.renderBabylon, 4)}
-          {this.renderView('2d Canvas', 'Konva', this.renderCanvas, 4)}
-          {this.renderView('DOM', 'DOM', this.renderDOM, 4)}
-        </Row>
-        <Row className={'show-grid'} style={{display: 'flex', flexWrap: 'wrap'}}>
-          {this.renderView('FAKE1', 'Babylon3d', this.renderFake, 4)}
-          {this.renderView('FAKE2', 'VR', this.renderFake, 8)}
-        </Row>
-      </Col>
+      <div style={{position: 'absolute', width: '100%', height: '100%', top: 0, left: 0}}>
+        <div style={{alignItems: 'stretch', position: 'absolute', width: '100%', height: '50%', top: 0, left: 0}}>
+          {this.renderView('Canvas in 3d World', 'BabylonKonva', this.renderBabylon, '100%')}
+        </div>
+        <div style={{position: 'absolute', width: '100%', height: '50%', top: '50%', left: 0}}>
+          {this.renderView('2d Canvas', 'Konva', this.renderCanvas, '50%', 0)}
+          {this.renderView('DOM', 'DOM', this.renderDOM, '50%', '50%')}
+        </div>
+      </div>
     )
   }
 })

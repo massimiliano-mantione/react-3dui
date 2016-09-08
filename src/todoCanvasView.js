@@ -4,14 +4,14 @@ import {Styler} from 'debonair'
 
 import {listElementScale, listElementPosition} from './listElementScale'
 
-const ROW_HEIGTH = 25
-const LINE_HEIGTH = 30
+const ROW_HEIGTH = 40
+const LINE_HEIGTH = 50
 const GAP_HEIGTH = 10
 const LIST_SIZE = 3.50
 const LIST_HEIGTH = LIST_SIZE * ROW_HEIGTH
 const HEADER_HEIGTH = LINE_HEIGTH
 const FOOTER_HEIGTH = LINE_HEIGTH
-const PANEL_WIDTH = 300
+const PANEL_WIDTH = 400
 const PANEL_HEIGTH = HEADER_HEIGTH + LIST_HEIGTH + FOOTER_HEIGTH + (3 * GAP_HEIGTH)
 
 const BACKGROUND_COLOR = '#FFFFFF'
@@ -126,7 +126,7 @@ let PanelRow = React.createClass({
           stroke={stroke}
           height={height}
           width={width}
-          cornerRadius={5}/>
+          cornerRadius={8}/>
         <Group style={containerStyler({height: height, width: width})}>
           {children}
         </Group>
@@ -193,7 +193,7 @@ let HeaderText = React.createClass({
     if (align === 'right') {
       text = text + ' '
     }
-    let fontSize = 16
+    let fontSize = 20
     return (
       <Text listening={false} style={panelItemStyler()} text={text} fill={TEXT_COLOR} align={align} fontSize={fontSize} offsetY={(fontSize / 2) - (LINE_HEIGTH / 2)}/>
     )

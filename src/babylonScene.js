@@ -1,49 +1,11 @@
 import React from 'react'
 import BABYLON from 'babylonjs'
 
-var mouseEventKeys = [
-  'altKey',
-  'bubbles',
-  'button',
-  'buttons',
-  'cancelBubble',
-  'cancelable',
-  'clientX',
-  'clientY',
-  'ctrlKey',
-  'currentTarget',
-  'defaultPrevented',
-  'detail',
-  'eventPhase',
-  'fromElement',
-  'isTrusted',
-  'layerX',
-  'layerY',
-  'metaKey',
-  'movementX',
-  'movementY',
-  'offsetX',
-  'offsetY',
-  'pageX',
-  'pageY',
-  'screenX',
-  'screenY',
-  'shiftKey',
-  'srcElement',
-  'target',
-  'timeStamp',
-  'toElement',
-  'type',
-  'view',
-  'which',
-  'x',
-  'y'
-]
-
 var BabylonScene = React.createClass({
   propTypes: {
     setCanvasCallbacks: React.PropTypes.func.isRequired,
-    pointerEventHandler: React.PropTypes.func.isRequired
+    pointerEventHandler: React.PropTypes.func.isRequired,
+    useVrCamera: React.PropTypes.bool.isRequired
   },
 
   canvas3d: null,
@@ -226,7 +188,7 @@ var BabylonScene = React.createClass({
 
   render: function () {
     return (
-      <canvas style={{width: '100%', height: '100%'}} ref={this.onCanvas3d} />
+      <canvas width={1400} height={450} ref={this.onCanvas3d} />
     )
   }
 })

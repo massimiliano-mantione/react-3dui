@@ -1,0 +1,208 @@
+link(rel="stylesheet", href="assets/style.css")
+link(rel="stylesheet", href="assets/highlight.css")
+script(src="assets/clock.js")
+
+body(onload="prepareClock()")
+  div.myclock(id="clock")
+
+section
+  div.futurelogo(style="margin: auto; width: 70%; height: 70%; display: flex; align-items: center; justify-content: center;")
+    img(src="assets/FullStackFestLogo.svg")
+  h1 Reactive Reality
+  p.dateStyle September 9 2016, Barcelona
+  p Massimiliano Mantione
+
+section
+  section
+    p
+      em About Myself
+    h2.fragment An enthusiast software engineer
+    p.fragment Passionate about languages and compilers
+    p.fragment.roll-in <b>Worked in the V8 team in Google</b>
+    p.fragment Overall, worked on JIT compilers for +7 years
+    p.fragment Started as a Javascript hater
+    p.fragment.embox.roll-in
+      | Now likely a
+      br
+      | full stack developer
+
+section
+  h1 Why...
+  p.fragment.embox.roll-in am I doing this talk?
+  p.fragment Virtual reality is all the rage!
+  p.fragment.roll-in ... but this starts from a <b>real</b> need
+
+section
+  h1 Hyperfair
+  p.fragment The company where I work
+  p.fragment we do virtual tradeshows on the web
+  p.fragment also virtual showrooms
+  p.fragment.embox.roll-in seeing it is easier
+
+section
+  h1 Our core product...
+  p.fragment is in 3D
+  p.fragment has a UI
+  p.fragment we are transitioning it to VR
+  p.fragment
+    em (Oculus, Cardboard, Daydream)
+  p.fragment.embox.roll-in we'll need our UI in VR, too!
+
+section
+  h1 Technology
+  p.fragment we are based on Unity3D
+  p.fragment and so is our UI
+  p.fragment.embox.roll-in
+    | But what if we wanted to use
+    br
+    | proper web technologies?
+
+section
+  h1 I have a dream
+  p.fragment Of a world where developers can build 3D UIs
+  p.fragment On the Web
+  p.fragment In VR worlds
+  p.fragment.embox.roll-in Using the same technologies and tools they already know and use every day
+
+section
+  h1 The 10 - 90 rule
+  p.fragment.roll-in 10% inspiration
+  p.fragment.roll-in 90% perspiration
+
+section
+  h1 I'm sorry
+  p.fragment In this talk, the inspirational part is over
+  p.fragment From now on it's all about doing the dirty job
+
+section
+  h1 On the web
+  p.fragment UI === DOM
+  p.fragment
+    em (usually with a framework on top)
+  p.fragment VR === WebGL
+  p.fragment
+    em (usually with a framework on top)
+
+section
+  h1 Can I haz...
+  p.fragment
+    veryBig DOM over WebGL?
+
+section
+  h1 Life is hard on us
+  p.fragment CSS 3D transforms are unnatural
+  p.fragment they don't really integrate with the WebGL Z buffer
+  p.fragment they are, in general, "out" of the WebGL canvas
+
+section
+  h1 Can I haz...
+  p.fragment DOM rendered in a Canvas context?
+  p.fragment Through SVG, but it's almost a joke
+  p.fragment CORS gets in the way
+  p.fragment The security implications are nontrivial
+
+section
+  h1 I don't give up
+  p.fragment Are there other options?
+  p.fragment We can give up the DOM...
+  p.fragment.embox.roll-in ...and render our UI directly inside the WebGL canvas!
+
+section
+  h1 Not so fast, boy!
+  p.fragment In VR, the WebGL canvas is in 3D mode
+  p.fragment Usually we want our UI in 2D
+  p.fragment Believe me, you <b>do</b> want a 2D UI
+
+section
+  h1 Idea!
+  p.fragment.embox.roll-in We can render in another canvas and use that as a texture
+
+section
+  h1 A UI framework
+  p.fragment One that we are used to
+  p.fragment Let's pick React
+  ul
+    li.fragment easy to separate logic from view code
+    li.fragment DOM-independent
+
+section
+  h1 A sample application
+  p.fragment The ubiquitous todo list
+  p.fragment.embox.roll-in Simplified
+
+section
+  h1 Implementation
+  p.fragment Build the logic in Redux style
+  p.fragment Then we'll reuse the logic in the 3D UI
+  p.fragment Let's see how it looks
+
+section
+  h1 Back to the Canvas
+  p.fragment What about...
+  p.fragment ...a canvas drawing framework...
+  p.fragment ...with React bindings?
+
+section
+  h1 Help!
+  p.fragment Javascript fatigue is hitting us
+  p.fragment Choice is good, but also hard
+  p.fragment.embox.roll-in Always better than starting from scratch
+
+section
+  h1 Top choices
+  p.fragment React-canvas
+  p.fragment Pixi
+  p.fragment Konva
+
+section
+  h1 Pick your poison
+  p.fragment and do it wisely
+  p.fragment.embox.roll-in because you'll live with it for longer than you think
+
+section
+  h1 I picked Konva
+  p.fragment And added css-layout to it
+  p.fragment I even did a pull request for this
+
+section
+  h1 The devil
+  p.fragment
+    veryBig is in the details
+
+section
+  h1 Issues
+  p.fragment css-layout is not enough
+  p.fragment propagating size info in the layout tree is cumbersome
+  p.fragment mixing css-layout and konva styling is cumbersome
+  p.fragment css-layout does not always do what you think
+  p.fragment konva does not filter events selectively
+  p.fragment konva does not handle key events
+
+section
+  h1 We solved these...
+  p.fragment ...and now?
+  p.fragment We have a 2D UI inside a Canvas
+  p.fragment We still need to show it in 3D
+  p.fragment Let's build a 3D scene!
+  p.fragment And then?
+
+section
+  h1 More issues!
+
+
+
+
+section
+  h1 Takeaway
+  p.fragment Transducers model composable and reusable transformations of sequences of values
+  p.fragment Several modern libraries are starting to support them
+  p.fragment Push and Pull are dual
+  p.fragment Async is properly represented by promises
+
+section
+  h1 That's All, Folks
+  p -
+  p code, docs and slides are on github
+  p twitter: @M_a_s_s_i, #metascript
+  p -
+  h2 Thanks for following!

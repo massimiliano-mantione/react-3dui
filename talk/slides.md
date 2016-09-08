@@ -1,6 +1,4 @@
 
-Something about me
-
 Why am I doing this talk?
 Virtual reality is all the rage!
 ... but this starts from a real need

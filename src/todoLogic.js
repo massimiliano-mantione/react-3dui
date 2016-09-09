@@ -101,7 +101,6 @@ function createDispatcher (stateHandler) {
   return function dispatch (action, argument1, argument2) {
     let newState = actions[action](state, argument1, argument2)
     if (state !== newState) {
-      console.log('dispatch', action, newState)
       state = newState
       stateHandler(state)
     }

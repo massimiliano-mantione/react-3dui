@@ -222,6 +222,8 @@ let TodoText = React.createClass({
   }
 })
 
+// Actual view code starts here!
+
 let TodoElement = React.createClass({
   propTypes: {
     y: React.PropTypes.number.isRequired,

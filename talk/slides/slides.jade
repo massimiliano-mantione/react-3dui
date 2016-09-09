@@ -13,23 +13,32 @@ section
   p Massimiliano Mantione
 
 section
-  section
-    p
-      em About Myself
-    h2.fragment An enthusiast software engineer
-    p.fragment Passionate about languages and compilers
-    p.fragment.roll-in <b>Worked in the V8 team in Google</b>
-    p.fragment Overall, worked on JIT compilers for +7 years
-    p.fragment Started as a Javascript hater
-    p.fragment.embox.roll-in
-      | Now likely a
-      br
-      | full stack developer
+  p
+    em About Myself
+  h2.fragment An enthusiast software engineer
+  p.fragment Passionate about languages and compilers
+  p.fragment.roll-in <b>Worked in the V8 team in Google</b>
+  p.fragment Overall, worked on JIT compilers for +7 years
+  p.fragment Started as a Javascript hater
+  p.fragment.embox.roll-in
+    | Now likely a
+    br
+    | full stack developer
+
+section
+  h2 Adjust Your Expectations
+  p
+    em (from this talk)
+  p.fragment I am <b>not</b> a UI (or UX) designer
+  p.fragment I'll <b>not</b> show you new ways to interact with UIs in 3D
+  p.fragment I'll show you a way to <b>build</b> UIs usable in a 3D world
+  p.fragment.embox.roll-in
+    em with solid software engineering principles
 
 section
   h1 Why...
   p.fragment.embox.roll-in am I doing this talk?
-  p.fragment Virtual reality is all the rage!
+  p.fragment Virtual Reality is all the rage!
   p.fragment.roll-in ... but this starts from a <b>real</b> need
 
 section
@@ -73,6 +82,7 @@ section
   h1 I'm sorry
   p.fragment In this talk, the inspirational part is over
   p.fragment From now on it's all about doing the dirty job
+  p.fragment.embox.roll-in Let's build this UI!
 
 section
   h1 On the web
@@ -90,20 +100,25 @@ section
 
 section
   h1 Life is hard on us
+  p.fragment.embox.roll-in
+    strike DOM over WebGL
   p.fragment CSS 3D transforms are unnatural
   p.fragment they don't really integrate with the WebGL Z buffer
   p.fragment they are, in general, "out" of the WebGL canvas
 
 section
   h1 Can I haz...
-  p.fragment DOM rendered in a Canvas context?
+  p.fragment.embox.roll-in DOM rendered in a Canvas context?
   p.fragment Through SVG, but it's almost a joke
   p.fragment CORS gets in the way
   p.fragment The security implications are nontrivial
+  p.fragment.roll-in
+    em This <b>will</b> happen, but <b>not</b> now
 
 section
   h1 I don't give up
-  p.fragment Are there other options?
+  p.fragment
+    em Are there other options?
   p.fragment We can give up the DOM...
   p.fragment.embox.roll-in ...and render our UI directly inside the WebGL canvas!
 
@@ -111,14 +126,17 @@ section
   h1 Not so fast, boy!
   p.fragment In VR, the WebGL canvas is in 3D mode
   p.fragment Usually we want our UI in 2D
-  p.fragment Believe me, you <b>do</b> want a 2D UI
+  p.fragment
+    em Believe me, you <b>do</b> want a 2D UI
 
 section
   h1 Idea!
-  p.fragment.embox.roll-in We can render in another canvas and use that as a texture
+  p.fragment.embox.roll-in We can render the UI in a separated 2D canvas and use that as a texture in the 3D canvas
 
 section
-  h1 A UI framework
+  h1 Render the UI
+  p.fragment
+    em ...with which framework?
   p.fragment One that we are used to
   p.fragment Let's pick React
   ul
@@ -126,9 +144,12 @@ section
     li.fragment DOM-independent
 
 section
-  h1 A sample application
-  p.fragment The ubiquitous todo list
-  p.fragment.embox.roll-in Simplified
+  h1 Let's Pick...
+  p.fragment
+    em ...a sample application...
+  p.fragment.embox.roll-in The ubiquitous todo list
+  p.fragment
+    em Simplified
 
 section
   h1 Implementation
@@ -151,8 +172,8 @@ section
 section
   h1 Top choices
   p.fragment React-canvas
-  p.fragment Pixi
-  p.fragment Konva
+  p.fragment Pixi.js
+  p.fragment Konva.js
 
 section
   h1 Pick your poison
@@ -161,8 +182,13 @@ section
 
 section
   h1 I picked Konva
-  p.fragment And added css-layout to it
-  p.fragment I even did a pull request for this
+  p.fragment.embox.roll-in
+    | Mostly because its react wrapper is 
+    em simple
+  p.fragment I then added css-layout to it
+  p.fragment
+    em I even did a pull request for this
+  p.fragment.embox.roll-in Let's see
 
 section
   h1 The devil
@@ -176,33 +202,57 @@ section
   p.fragment mixing css-layout and konva styling is cumbersome
   p.fragment css-layout does not always do what you think
   p.fragment konva does not filter events selectively
-  p.fragment konva does not handle key events
+  p.fragment konva does not handle keyboard events
 
 section
   h1 We solved these...
-  p.fragment ...and now?
+  p.fragment
+    em ...and now?
   p.fragment We have a 2D UI inside a Canvas
   p.fragment We still need to show it in 3D
   p.fragment Let's build a 3D scene!
-  p.fragment And then?
+  p.fragment -
+  p.fragment
+    em And then?
 
 section
   h1 More issues!
+  p.fragment Mapping events is tricky
+  p.fragment Babylon events and setState invocations were fighting each other
+  p.fragment
+    em <b>async</b> setState with requestAnimationFrame
+  p.fragment Did I say that mpping events is tricky?
 
+section
+  h1 It Works!
+  p.fragment
+    veryBig And VR?
 
-
+section
+  h1 Future Ideas
+  p.fragment Real 3D UIS
+  p.fragment Unified framework with React.js bindings to Bablon 3D objects and Canvas2D shapes
+  p.fragment Need to fix:
+  ul
+    li.fragment Clipping
+    li.fragment Layout
+    li.fragment Canvas2D texture on any mesh
 
 section
   h1 Takeaway
-  p.fragment Transducers model composable and reusable transformations of sequences of values
-  p.fragment Several modern libraries are starting to support them
-  p.fragment Push and Pull are dual
-  p.fragment Async is properly represented by promises
+  p.fragment The proof of concept works
+  p.fragment
+    em (it's not production ready)
+  p.fragment With current frameworks it's harder than what I had imagined
+  p.fragment
+    | With some effort, it can be made beautyful
+    br
+    em (from the <b>developer</b> point of view)
 
 section
   h1 That's All, Folks
   p -
-  p code, docs and slides are on github
-  p twitter: @M_a_s_s_i, #metascript
+  p code and slides are on github
+  p twitter: @M_a_s_s_i
   p -
   h2 Thanks for following!

@@ -2,6 +2,7 @@ function startTime () {
   var today = new Date()
   var h = today.getHours()
   var m = today.getMinutes()
+  h = checkTime(h)
   m = checkTime(m)
   document.getElementById('clock').innerHTML = h + ' ' + m
   setTimeout(function () { startTime() }, 500)
@@ -15,9 +16,19 @@ function checkTime (i) {
 }
 
 function prepareClock () {
+  var theme = document.getElementById('theme')
+  theme.href = 'assets/style-fd.css'
+
   var clock = document.getElementById('clock')
+  var bottomband = document.getElementById('bottomband')
   var body = clock.parentNode.parentNode.parentNode
   clock = clock.parentNode.removeChild(clock)
-  body.appendChild(clock)
+  if (bottomband !== null) {
+    bottomband = bottomband.parentNode.removeChild(bottomband)
+    bottomband.insertBefore(clock, bottomband.firstChild)
+    body.appendChild(bottomband)
+  } else {
+    body.appendChild(clock)
+  }
   startTime()
 }

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="Web Components + React.JS">
+		<meta name="author" content="Massimiliano Mantione">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="css/reveal.min.css">
+		<link rel="stylesheet" href="css/theme/default.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+		<script>
+			document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+            <div class="slides"><script src="assets/clock.js"></script><body onload="prepareClock()"><div id="bottomband"><span>FUTURE DECODED - Milano, October 6 2016</span></div><div id="clock"></div></body><section><div style="display: flex; width: 100%; height: 100%; align-items: center; justify-content: center;"><img src="assets/FutureDecodedIntro.jpg"/></div></section><section><div style="margin: auto; width: 70%; height: 70%; display: flex; align-items: center; justify-content: center;" class="futurelogo"><img src="assets/CommunityDaysLogo.png"/></div><h1>Reactive Reality</h1><p class="dateStyle">October 6 2016, Milano</p><p>Massimiliano Mantione</p></section><section><p><em>About Myself</em></p><h2 class="fragment">An enthusiast software engineer</h2><p class="fragment">Passionate about languages and compilers</p><p class="fragment roll-in"><b>Worked in the V8 team in Google</b></p><p class="fragment roll-in"><b><i>Worked in the Mono team in Novell</i></b></p><p class="fragment">Overall, worked on JIT compilers for +7 years</p><p class="fragment">Started as a Javascript hater</p><p class="fragment embox roll-in">Now likely a<br/>full stack developer</p></section><section><h2>Adjust Your Expectations</h2><p><em>(from this talk)</em></p><p class="fragment">I am <b>not</b> a UI (or UX) designer</p><p class="fragment">I'll <b>not</b> show you new ways to interact with UIs in 3D</p><p class="fragment">I'll show you a way to <b>build</b> UIs usable in a 3D world</p><p class="fragment embox roll-in"><em>with solid software engineering principles</em></p></section><section><h1>Why...</h1><p class="fragment embox roll-in">am I doing this talk?</p><p class="fragment">Virtual Reality is all the rage!</p><p class="fragment roll-in">... but this starts from a <b>real</b> need</p></section><section><h1>Hyperfair</h1><p class="fragment">The company where I work</p><p class="fragment">we do virtual tradeshows on the web</p><p class="fragment">also virtual showrooms</p><p class="fragment embox roll-in">seeing it is easier</p></section><section><h1>Our core product...</h1><p class="fragment">is in 3D</p><p class="fragment">has a UI</p><p class="fragment">we are transitioning it to VR</p><p class="fragment"><em>(Oculus, Cardboard, Daydream)</em></p><p class="fragment embox roll-in">we'll need our UI in VR, too!</p></section><section><h1>Technology</h1><p class="fragment">we are based on Unity3D</p><p class="fragment">and so is our UI</p><p class="fragment embox roll-in">But what if we wanted to use<br/>proper web technologies?</p></section><section><h1>I have a dream</h1><p class="fragment">Of a world where developers can build 3D UIs</p><p class="fragment">On the Web</p><p class="fragment">In VR worlds</p><p class="fragment embox roll-in">Using the same technologies and tools they already know and use every day</p></section><section><h1>The 10 - 90 rule</h1><p class="fragment roll-in">10% inspiration</p><p class="fragment roll-in">90% perspiration</p></section><section><h1>I'm sorry</h1><p class="fragment">In this talk, the inspirational part is over</p><p class="fragment">From now on it's all about doing the dirty job</p><p class="fragment embox roll-in">Let's build this UI!</p></section><section><h1>On the web</h1><p class="fragment">UI === DOM</p><p class="fragment"><em>(usually with a framework on top)</em></p><p class="fragment">VR === WebGL</p><p class="fragment"><em>(usually with a framework on top)</em></p></section><section><h1>Can I haz...</h1><p class="fragment"><veryBig>DOM over WebGL?</veryBig></p></section><section><h1>Life is hard on us</h1><p class="fragment embox roll-in"><strike>DOM over WebGL</strike></p><p class="fragment">CSS 3D transforms are unnatural</p><p class="fragment">they don't really integrate with the WebGL Z buffer</p><p class="fragment">they are, in general, "out" of the WebGL canvas</p></section><section><h1>Can I haz...</h1><p class="fragment embox roll-in">DOM rendered in a Canvas context?</p><p class="fragment">Through SVG, but it's almost a joke</p><p class="fragment">CORS gets in the way</p><p class="fragment">The security implications are nontrivial</p><p class="fragment roll-in"><em>This <b>will</b> happen, but <b>not</b> now</em></p></section><section><h1>I don't give up</h1><p class="fragment"><em>Are there other options?</em></p><p class="fragment">We can give up the DOM...</p><p class="fragment embox roll-in">...and render our UI directly inside the WebGL canvas!</p></section><section><h1>Not so fast, boy!</h1><p class="fragment">In VR, the WebGL canvas is in 3D mode</p><p class="fragment">Usually we want our UI in 2D</p><p class="fragment"><em>Believe me, you <b>do</b> want a 2D UI</em></p></section><section><h1>Idea!</h1><p class="fragment embox roll-in">We can render the UI in a separated 2D canvas and use that as a texture in the 3D canvas</p></section><section><h1>Render the UI</h1><p class="fragment"><em>...with which framework?</em></p><p class="fragment">One that we are used to</p><p class="fragment">Let's pick React</p><ul><li class="fragment">easy to separate logic from view code</li><li class="fragment">DOM-independent</li></ul></section><section><h1>Let's Pick...</h1><p class="fragment"><em>...a sample application...</em></p><p class="fragment embox roll-in">The ubiquitous todo list</p><p class="fragment"><em>Simplified</em></p></section><section><h1>Implementation</h1><p class="fragment">Build the logic in Redux style</p><p class="fragment">Then we'll reuse the logic in the 3D UI</p><p class="fragment">Let's see how it looks</p></section><section><h1>Back to the Canvas</h1><p class="fragment">What about...</p><p class="fragment">...a canvas drawing framework...</p><p class="fragment">...with React bindings?</p></section><section><h1>Help!</h1><p class="fragment">Javascript fatigue is hitting us</p><p class="fragment">Choice is good, but also hard</p><p class="fragment embox roll-in">Always better than starting from scratch</p></section><section><h1>Top choices</h1><p class="fragment">React-canvas</p><p class="fragment">Pixi.js</p><p class="fragment">Konva.js</p></section><section><h1>Pick your poison</h1><p class="fragment">and do it wisely</p><p class="fragment embox roll-in">because you'll live with it for longer than you think</p></section><section><h1>I picked Konva</h1><p class="fragment embox roll-in">Mostly because its react wrapper is <em>simple</em></p><p class="fragment">I then added css-layout to it</p><p class="fragment"><em>I even did a pull request for this</em></p><p class="fragment embox roll-in">Let's see</p></section><section><h1>The devil</h1><p class="fragment"><veryBig>is in the details</veryBig></p></section><section><h1>Issues</h1><p class="fragment">css-layout is not enough</p><p class="fragment">propagating size info in the layout tree is cumbersome</p><p class="fragment">mixing css-layout and konva styling is cumbersome</p><p class="fragment">css-layout does not always do what you think</p><p class="fragment">konva does not filter events selectively</p><p class="fragment">konva does not handle keyboard events</p></section><section><h1>We solved these...</h1><p class="fragment"><em>...and now?</em></p><p class="fragment">We have a 2D UI inside a Canvas</p><p class="fragment">We still need to show it in 3D</p><p class="fragment">Let's build a 3D scene!</p><p class="fragment">-</p><p class="fragment"><em>And then?</em></p></section><section><h1>More issues!</h1><p class="fragment">Mapping events is tricky</p><p class="fragment">Babylon events and setState invocations were fighting each other</p><p class="fragment"><em><b>async</b> setState with requestAnimationFrame</em></p><p class="fragment">Did I say that mpping events is tricky?</p></section><section><h1>It Works!</h1><p class="fragment"><veryBig>And VR?</veryBig></p></section><section><h1>Future Ideas</h1><p class="fragment">Real 3D UIS</p><p class="fragment">Unified framework with React.js bindings to Bablon 3D objects and Canvas2D shapes</p><p class="fragment">Need to fix:</p><ul><li class="fragment">Clipping</li><li class="fragment">Layout</li><li class="fragment">Canvas2D texture on any mesh</li></ul></section><section><h1>Takeaway</h1><p class="fragment">The proof of concept works</p><p class="fragment"><em>(it's not production ready)</em></p><p class="fragment">With current frameworks it's harder than what I had imagined</p><p class="fragment">With some effort, it can be made beautyful<br/><em>(from the <b>developer</b> point of view)</em></p></section><section><h1>That's All, Folks</h1><p>-</p><p>code and slides are on github</p><p>twitter: @M_a_s_s_i</p><p>-</p><h2>Thanks for following!</h2></section>    </div>
+</div>
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+    // Full list of configuration options available here:
+    // https://github.com/hakimel/reveal.js#configuration
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        theme: Reveal.getQueryHash().theme || "default", // available themes are in /css/theme
+        transition: Reveal.getQueryHash().transition || "default" || 'default', // default/cube/page/concave/zoom/linear/none
+
+        // Optional libraries used to extend on reveal.js
+        dependencies: [
+            { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'plugin/markdown/showdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+            // { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+        ]
+    });
+
+</script>
+</body>
+</html>
+        
